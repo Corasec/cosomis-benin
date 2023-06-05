@@ -18,6 +18,12 @@ import environ
 from django.conf import global_settings
 from django.utils.translation import gettext_lazy as _
 
+try:
+    from .local_settings import *  # noqa: F403
+except ImportError:
+    from .local_settings_template import *  # noqa: F403
+    print("No local_settings.py, the application will not run")
+
 # https://django-environ.readthedocs.io/en/latest/
 env = environ.Env()
 env.read_env()
@@ -30,7 +36,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'pl&dkqrq0rj+#n747=@#a-0b(bgb2j#%@f7v4_vp1q84cr7r#$'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG', False)
@@ -65,9 +71,9 @@ THIRD_PARTY_APPS = [
     'rest_framework',
 ]
 
-INSTALLED_APPS += CREATED_APPS + THIRD_PARTY_APPS
+INSTALLED_APPS += CREATED_APPS + THIRD_PARTY_APPS + LOCAL_INSTALLED_APPS
 
-MIDDLEWARE = [
+MIDDLEWARE = LOCAL_MIDDLEWARE + [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware', #tries to determine user's language using URL language prefix
