@@ -1,0 +1,19 @@
+
+*.pyc
+
+cosomis/.idea/
+
+cosomis/db.sqlite3
+
+.DS_Store
+
+cosomis/cosomis/.env
+
+cosomis/cosomis/production.env
+
+cosomis/cosomis/*.env
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
