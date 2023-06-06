@@ -22,7 +22,7 @@ try:
     from .local_settings import *  # noqa: F403
 except ImportError:
     from .local_settings_template import *  # noqa: F403
-    print("No local_settings.py, the application will not run")
+    print("No local_settings.py, used .local_settings_template")
 
 # https://django-environ.readthedocs.io/en/latest/
 env = environ.Env()

@@ -23,5 +23,6 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 RUN pip install gunicorn
+RUN rm cosomis/local_settings.py
 
-CMD ["gunicorn", "cosomis.wsgi:application", "--bind 0.0.0.0:8080"]
+CMD ["gunicorn"  , "-b", "127.0.0.1:8000", "cosomis.wsgi:application"]
