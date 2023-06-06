@@ -4,30 +4,32 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('administrativelevels', '0014_alter_geographicalunit_attributed_number_in_canton'),
+        (
+            "administrativelevels",
+            "0014_alter_geographicalunit_attributed_number_in_canton",
+        ),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='cvd',
-            name='created_date',
+            model_name="cvd",
+            name="created_date",
             field=models.DateTimeField(auto_now_add=True, null=True),
         ),
         migrations.AddField(
-            model_name='cvd',
-            name='updated_date',
+            model_name="cvd",
+            name="updated_date",
             field=models.DateTimeField(auto_now=True, null=True),
         ),
         migrations.AddField(
-            model_name='geographicalunit',
-            name='created_date',
+            model_name="geographicalunit",
+            name="created_date",
             field=models.DateTimeField(auto_now_add=True, null=True),
         ),
         migrations.AddField(
-            model_name='geographicalunit',
-            name='updated_date',
+            model_name="geographicalunit",
+            name="updated_date",
             field=models.DateTimeField(auto_now=True, null=True),
         ),
     ]

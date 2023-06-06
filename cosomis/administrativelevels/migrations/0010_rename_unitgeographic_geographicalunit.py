@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('administrativelevels', '0009_unitgeographic_cvd_administrativelevel_cvd'),
+        ("administrativelevels", "0009_unitgeographic_cvd_administrativelevel_cvd"),
     ]
 
     operations = [
         migrations.RenameModel(
-            old_name='UnitGeographic',
-            new_name='GeographicalUnit',
+            old_name="UnitGeographic",
+            new_name="GeographicalUnit",
         ),
     ]

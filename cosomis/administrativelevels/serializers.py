@@ -3,9 +3,8 @@ from administrativelevels.models import AdministrativeLevel
 
 
 class AdministrativeLevelSerializer(serializers.ModelSerializer):
-	class Meta:
-		"""docstring for Meta"""
-		model = AdministrativeLevel
-		fields = '__all__'
+    class Meta:
+        """docstring for Meta"""
 
-
+        model = AdministrativeLevel
+        fields = "__all__"

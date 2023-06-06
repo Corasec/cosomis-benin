@@ -4,16 +4,15 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('administrativelevels', '0016_alter_administrativelevel_unique_together'),
+        ("administrativelevels", "0016_alter_administrativelevel_unique_together"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='cvd',
-            name='name',
-            field=models.CharField(default='', max_length=255),
+            model_name="cvd",
+            name="name",
+            field=models.CharField(default="", max_length=255),
             preserve_default=False,
         ),
     ]

@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('administrativelevels', '0015_cvd_created_date_cvd_updated_date_and_more'),
+        ("administrativelevels", "0015_cvd_created_date_cvd_updated_date_and_more"),
     ]
 
     operations = [
         migrations.AlterUniqueTogether(
-            name='administrativelevel',
-            unique_together={('name', 'parent', 'type')},
+            name="administrativelevel",
+            unique_together={("name", "parent", "type")},
         ),
     ]

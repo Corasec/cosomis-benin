@@ -5,20 +5,24 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('administrativelevels', '0012_alter_cvd_unit_geographic'),
+        ("administrativelevels", "0012_alter_cvd_unit_geographic"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='cvd',
-            old_name='unit_geographic',
-            new_name='geographical_unit',
+            model_name="cvd",
+            old_name="unit_geographic",
+            new_name="geographical_unit",
         ),
         migrations.AddField(
-            model_name='administrativelevel',
-            name='geographical_unit',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='administrativelevels.geographicalunit'),
+            model_name="administrativelevel",
+            name="geographical_unit",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="administrativelevels.geographicalunit",
+            ),
         ),
     ]

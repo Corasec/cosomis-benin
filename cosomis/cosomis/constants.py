@@ -1,3 +1,4 @@
+from extended_choices import Choices
 
 
 OBSTACLES_FOCUS_GROUP = [
@@ -8,5 +9,12 @@ GOALS_FOCUS_GROUP = [
     "Vision for the focus group of Farmers and breeders", "Vision for the women's focus group",
     "Vision for the youth focus group", "Vision for the focus group of ethnic minority groups"
 ]
+
+ADMINISTRATIVE_LEVEL_TYPE = Choices(
+    ("DÉPARTEMENT", "département", "Département"),
+    ("COMMUNE", "commune", "Commune"),
+    ("ARRONDISSEMENT", "arrondissement", "Arrondissement"),
+    ("VILLAGE", "village", "Village"),
+)
 
 

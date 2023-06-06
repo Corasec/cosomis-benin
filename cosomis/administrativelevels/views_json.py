@@ -8,9 +8,14 @@ from administrativelevels.serializers import AdministrativeLevelSerializer
 
 
 class GetAdministrativeLevelByTypeView(APIView):
-
     permission_classes = (permissions.IsAuthenticated,)
-    def get(self, request, *args, **kwargs):
-        _type = request.GET.get('type', None)
 
-        return Response(AdministrativeLevelSerializer(AdministrativeLevel.objects.filter(type=_type), many=True).data, status.HTTP_200_OK)
+    def get(self, request, *args, **kwargs):
+        _type = request.GET.get("type", None)
+
+        return Response(
+            AdministrativeLevelSerializer(
+                AdministrativeLevel.objects.filter(type=_type), many=True
+            ).data,
+            status.HTTP_200_OK,
+        )
