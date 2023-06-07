@@ -1,3 +1,4 @@
+import logging
 from administrativelevels.models import AdministrativeLevel
 from subprojects.models import VillagePriority, Component, Subproject
 from django.utils.translation import gettext_lazy as _
@@ -23,96 +24,65 @@ def exists_id(liste, id):
     return False
 
 
-def save_csv_file_datas_in_db(datas_file: dict) -> str:
-    """Function to save the CSV datas in database"""
+def save_adm_lvl_csv_datas_to_db(datas_file: dict) -> str:
+    """Function to save administrative levels CSV datas in the database"""
 
-    # determine if at least one is saved
-    at_least_one_save = False
-    # determine if at least one error has occurred
-    at_least_one_error = False
-    # ['DÉPARTEMENT', 'COMMUNE', 'ARRONDISSEMENT', 'VILLAGE']
+    logger = logging.getLogger(__name__)
+
     columns = list(ADMINISTRATIVE_LEVEL_TYPE.constants.keys())
     if datas_file:
-        count = 0
-        long = len(list(datas_file.values())[0])
-        while count < long:
-            for column in columns:
+        num_rows = len(next(iter(datas_file.values())))
+        saved_count = 0
+        error_count = 0
+
+        # save column by column
+        for column in columns:
+            for count, _ in enumerate(range(num_rows)):
                 try:
                     name = str(datas_file[column][count]).upper().strip()
-                    latitude, longitude = None, None
 
-                    _type = "Unknow"
+                    _type = "Unknown"
                     parent_type = ()
-                    if column == ADMINISTRATIVE_LEVEL_TYPE.DÉPARTEMENT:
+                    if column == ADMINISTRATIVE_LEVEL_TYPE.DÉPARTEMENT.constant:
                         _type = ADMINISTRATIVE_LEVEL_TYPE.DÉPARTEMENT
-                    elif column == "Préfecture":
-                        _type = "Prefecture"
-                        parent_type = ("Région", "Region")
-                    elif column == "Commune":
-                        _type = "Commune"
-                        parent_type = ("Préfecture", "Prefecture")
-                    elif column == "Canton":
-                        _type = "Canton"
-                        parent_type = ("Commune", "Commune")
-                    elif column == "Village/localité":
-                        _type = "Village"
-                        parent_type = ("Canton", "Canton")
+                    elif column == ADMINISTRATIVE_LEVEL_TYPE.COMMUNE.constant:
+                        _type = ADMINISTRATIVE_LEVEL_TYPE.COMMUNE
+                        parent_type = ADMINISTRATIVE_LEVEL_TYPE.DÉPARTEMENT
+                    elif column == ADMINISTRATIVE_LEVEL_TYPE.ARRONDISSEMENT.constant:
+                        _type = ADMINISTRATIVE_LEVEL_TYPE.ARRONDISSEMENT
+                        parent_type = ADMINISTRATIVE_LEVEL_TYPE.COMMUNE
+                    elif column == ADMINISTRATIVE_LEVEL_TYPE.VILLAGE.constant:
+                        _type = ADMINISTRATIVE_LEVEL_TYPE.VILLAGE
+                        parent_type = ADMINISTRATIVE_LEVEL_TYPE.ARRONDISSEMENT
 
                     parent = None
                     try:
-                        if _type not in ("Region", "Unknow"):
+                        if _type not in (ADMINISTRATIVE_LEVEL_TYPE.DÉPARTEMENT, "Unknown"):
                             parent = AdministrativeLevel.objects.filter(
-                                name=str(datas_file[parent_type[0]][count])
-                                .upper()
-                                .strip(),
-                                type=parent_type[1],
-                            ).first()  # Get the parent object of the administrative level
+                                name=str(datas_file[parent_type.constant][count]).upper().strip(),
+                                type=parent_type.value,
+                            ).first()
                     except Exception as exc:
-                        pass
-
-                    if (
-                        _type not in ("Region", "Unknow") and parent
-                    ) or _type == "Region":
-                        administratives_levels = AdministrativeLevel.objects.filter(
-                            name=name, type=_type, parent=parent
-                        )
-                        if (
-                            not administratives_levels
-                        ):  # If the administrative level is not already save
-                            administrative_level = AdministrativeLevel()
-                            administrative_level.name = name
-                            administrative_level.type = _type
-                            administrative_level.parent = parent
-                            # administrative_level.frontalier = frontalier
-                            # administrative_level.rural = rural
-                            # administrative_level.save()
-                            at_least_one_save = True
-                        else:  # If the administrative level is already save
-                            administrative_level = administratives_levels.first()
-
-                        administrative_level.frontalier = frontalier
-                        administrative_level.rural = rural
-                        administrative_level.latitude = latitude
-                        administrative_level.longitude = longitude
-                        administrative_level.save()
+                        logger.exception(exc)
+                    
+                    admlvl, created = AdministrativeLevel.objects.get_or_create(name=name, type=_type, parent=parent)
+                    if created:
+                        saved_count += 1
 
                 except Exception as exc:
-                    at_least_one_error = True
-                    print(exc)
+                    error_count += 1
+                    logger.exception(f"Exception occurred for {admlvl} : {exc}")
 
-            count += 1
+        if saved_count > 0 and error_count == 0:
+            message = "Success!"
+        elif saved_count == 0 and error_count == 0:
+            message = "No items have been saved!"
+        elif saved_count == 0 and error_count > 0:
+            message = "A problem has occurred!"
+        else:
+            message = "Some element(s) have not been saved!"
 
-    message = ""
-    if at_least_one_save and not at_least_one_error:
-        message = _("Success!")
-    elif not at_least_one_save and not at_least_one_error:
-        message = _("No items have been saved!")
-    elif not at_least_one_save and at_least_one_error:
-        message = _("A problem has occurred!")
-    elif at_least_one_save and at_least_one_error:
-        message = _("Some element(s) have not been saved!")
-
-    return message
+        return message
 
 
 def get_administratives_levels_under_file_excel_or_csv(

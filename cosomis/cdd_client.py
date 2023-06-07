@@ -3,6 +3,7 @@
 # no_sql_client.py library
 import time
 from no_sql_client import NoSQLClient
+from cosomis.constants import ADMINISTRATIVE_LEVEL_TYPE
 
 def iterate_administrative_level(adm_list, type):
 
@@ -56,16 +57,14 @@ class CddClient:
 
     def sync_administrative_levels(self, administrative_levels) -> bool:
 
-        # Sync Region
-        self.iterate_administrative_level(administrative_levels, "Region")
-        # Sync Prefecture
-        self.iterate_administrative_level(administrative_levels, "Prefecture")
-        # Sync Commune
-        self.iterate_administrative_level(administrative_levels, "Commune")
-        # Sync Canton
-        self.iterate_administrative_level(administrative_levels, "Canton")
-        # Sync Village
-        self.iterate_administrative_level(administrative_levels, "Village")
+        # Sync DÉPARTEMENT
+        self.iterate_administrative_level(administrative_levels, ADMINISTRATIVE_LEVEL_TYPE.DÉPARTEMENT)
+        # Sync COMMUNE
+        self.iterate_administrative_level(administrative_levels, ADMINISTRATIVE_LEVEL_TYPE.COMMUNE)
+        # Sync ARRONDISSEMENT
+        self.iterate_administrative_level(administrative_levels, ADMINISTRATIVE_LEVEL_TYPE.ARRONDISSEMENT)
+        # Sync VILLAGE
+        self.iterate_administrative_level(administrative_levels, ADMINISTRATIVE_LEVEL_TYPE.VILLAGE)
 
         return True
 

@@ -146,7 +146,7 @@ class CVD(BaseModel):
 
 
 def update_or_create_amd_couch(sender, instance, **kwargs):
-    print("test", instance.id, kwargs["created"])
+    print("up_or_cre_amd_couch test", instance.id, kwargs["created"])
     client = CddClient()
     if kwargs["created"]:
         couch_object_id = client.create_administrative_level(instance)
