@@ -2,7 +2,7 @@
 
 Before a provided user interface to load the administrative levels, a simple way to do it, is by using the shell.
 
-Given an `adminlevels.xlsx` structure like this:
+Given a file `adminlevels.xlsx` structured like this:
 
 | DÉPARTEMENT | COMMUNE   | ARRONDISSEMENT | VILLAGE |
 | ----------- | --------- | -------------- | ------- |

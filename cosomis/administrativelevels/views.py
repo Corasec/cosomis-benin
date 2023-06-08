@@ -16,7 +16,7 @@ import pandas as pd
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils.translation import gettext_lazy as _
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import Prefetch, Q
 
 from administrativelevels.models import AdministrativeLevel, GeographicalUnit, CVD
 from administrativelevels.libraries import convert_file_to_dict, download_file
@@ -28,6 +28,9 @@ from usermanager.permissions import (
     SuperAdminPermissionRequiredMixin,
     AdminPermissionRequiredMixin,
 )
+from cosomis.constants import ADMINISTRATIVE_LEVEL_TYPE
+
+SEARCH_PLACEHOLDER = "Rechercher"
 
 
 class VillageDetailView(PageMixin, LoginRequiredMixin, DetailView):
@@ -327,29 +330,31 @@ class AdministrativeLevelsListView(PageMixin, LoginRequiredMixin, ListView):
     ]
 
     def get_queryset(self):
-        search = self.request.GET.get("search", None)
+        search = self.request.GET.get("search", SEARCH_PLACEHOLDER)
         page_number = self.request.GET.get("page", None)
-        _type = self.request.GET.get("type", "Village")
-        if search:
-            if search == "All":
-                ads = AdministrativeLevel.objects.filter(type=_type)
-                return Paginator(ads, ads.count()).get_page(page_number)
-            search = search.upper()
+        _type = self.request.GET.get("type", ADMINISTRATIVE_LEVEL_TYPE.VILLAGE)
+
+        # to avoid duplicated queries
+        admlvl = AdministrativeLevel.objects.prefetch_related(
+            Prefetch(
+                "parent__parent",
+                queryset=AdministrativeLevel.objects.select_related("parent"),
+            )
+        )
+        if search != SEARCH_PLACEHOLDER:
             return Paginator(
-                AdministrativeLevel.objects.filter(type=_type, name__icontains=search),
+                admlvl.filter(type=_type, name__icontains=search),
                 100,
             ).get_page(page_number)
         else:
-            return Paginator(
-                AdministrativeLevel.objects.filter(type=_type), 100
-            ).get_page(page_number)
+            return Paginator(admlvl.filter(type=_type), 100).get_page(page_number)
 
         # return super().get_queryset()
 
     def get_context_data(self, **kwargs):
         ctx = super(AdministrativeLevelsListView, self).get_context_data(**kwargs)
-        ctx["search"] = self.request.GET.get("search", None)
-        ctx["type"] = self.request.GET.get("type", "Village")
+        ctx["search"] = self.request.GET.get("search", SEARCH_PLACEHOLDER)
+        ctx["type"] = self.request.GET.get("type", ADMINISTRATIVE_LEVEL_TYPE.VILLAGE)
         return ctx
 
 
