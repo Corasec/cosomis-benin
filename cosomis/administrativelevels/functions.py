@@ -57,15 +57,22 @@ def save_adm_lvl_csv_datas_to_db(datas_file: dict) -> str:
 
                     parent = None
                     try:
-                        if _type not in (ADMINISTRATIVE_LEVEL_TYPE.DÉPARTEMENT, "Unknown"):
+                        if _type not in (
+                            ADMINISTRATIVE_LEVEL_TYPE.DÉPARTEMENT,
+                            "Unknown",
+                        ):
                             parent = AdministrativeLevel.objects.filter(
-                                name=str(datas_file[parent_type.constant][count]).upper().strip(),
+                                name=str(datas_file[parent_type.constant][count])
+                                .upper()
+                                .strip(),
                                 type=parent_type.value,
                             ).first()
                     except Exception as exc:
                         logger.exception(exc)
-                    
-                    admlvl, created = AdministrativeLevel.objects.get_or_create(name=name, type=_type, parent=parent)
+
+                    admlvl, created = AdministrativeLevel.objects.get_or_create(
+                        name=name, type=_type, parent=parent
+                    )
                     if created:
                         saved_count += 1
 
