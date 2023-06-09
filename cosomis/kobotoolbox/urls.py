@@ -2,10 +2,6 @@ from django.urls import path
 
 from . import views
 
-app_name = 'kobotoolbox'
+app_name = "kobotoolbox"
 
-urlpatterns = [
-    path('kobo/', views.kobo, name='kobo')
-]
-
-
+urlpatterns = [path("kobo/", views.kobo, name="kobo")]

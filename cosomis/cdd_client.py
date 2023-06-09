@@ -5,24 +5,22 @@ import time
 from no_sql_client import NoSQLClient
 from cosomis.constants import ADMINISTRATIVE_LEVEL_TYPE
 
-def iterate_administrative_level(adm_list, type):
 
+def iterate_administrative_level(adm_list, type):
     for administrative_level in adm_list.filter(type=type):
         print(administrative_level.name)
 
 
 class CddClient:
-
     def __init__(self):
         self.nsc = NoSQLClient()
         self.adm_db = self.nsc.get_db("administrative_levels")
 
     def iterate_administrative_level(self, adm_list, type):
-
         for administrative_level in adm_list.filter(type=type):
             print("CREATING", administrative_level.name)
             couch_object_id = self.create_administrative_level(administrative_level)
-            
+
             to_update = adm_list.filter(id=administrative_level.id)
             to_update.update(no_sql_db_id=couch_object_id)
 
@@ -46,32 +44,37 @@ class CddClient:
         self.nsc.create_document(self.adm_db, data)
         new = self.adm_db.get_query_result(
             {
-                "type": 'administrative_level',
+                "type": "administrative_level",
                 "administrative_id": str(adm_obj.id),
             }
         )
         final = None
         for obj in new:
             final = obj
-        return final['_id']
+        return final["_id"]
 
     def sync_administrative_levels(self, administrative_levels) -> bool:
-
         # Sync DÉPARTEMENT
-        self.iterate_administrative_level(administrative_levels, ADMINISTRATIVE_LEVEL_TYPE.DÉPARTEMENT)
+        self.iterate_administrative_level(
+            administrative_levels, ADMINISTRATIVE_LEVEL_TYPE.DÉPARTEMENT
+        )
         # Sync COMMUNE
-        self.iterate_administrative_level(administrative_levels, ADMINISTRATIVE_LEVEL_TYPE.COMMUNE)
+        self.iterate_administrative_level(
+            administrative_levels, ADMINISTRATIVE_LEVEL_TYPE.COMMUNE
+        )
         # Sync ARRONDISSEMENT
-        self.iterate_administrative_level(administrative_levels, ADMINISTRATIVE_LEVEL_TYPE.ARRONDISSEMENT)
+        self.iterate_administrative_level(
+            administrative_levels, ADMINISTRATIVE_LEVEL_TYPE.ARRONDISSEMENT
+        )
         # Sync VILLAGE
-        self.iterate_administrative_level(administrative_levels, ADMINISTRATIVE_LEVEL_TYPE.VILLAGE)
+        self.iterate_administrative_level(
+            administrative_levels, ADMINISTRATIVE_LEVEL_TYPE.VILLAGE
+        )
 
         return True
 
     def update_administrative_level(self, obj) -> bool:
-        administrative_level = self.adm_db[
-             obj.no_sql_db_id
-        ]
+        administrative_level = self.adm_db[obj.no_sql_db_id]
         print(administrative_level)
         parent = ""
         if obj.parent:
@@ -91,9 +94,7 @@ class CddClient:
 
     def delete_administrative_level(self, obj) -> bool:
         try:
-            administrative_level = self.adm_db[
-                obj.no_sql_db_id
-            ]
+            administrative_level = self.adm_db[obj.no_sql_db_id]
             print(administrative_level)
 
             administrative_level.delete()

@@ -4,31 +4,40 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('administrativelevels', '0011_cvd_headquarters_village'),
-        ('subprojects', '0014_remove_subproject_administrative_level_and_more'),
+        ("administrativelevels", "0011_cvd_headquarters_village"),
+        ("subprojects", "0014_remove_subproject_administrative_level_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='subproject',
-            name='latitude',
+            model_name="subproject",
+            name="latitude",
             field=models.DecimalField(decimal_places=6, max_digits=9, null=True),
         ),
         migrations.AddField(
-            model_name='subproject',
-            name='longitude',
+            model_name="subproject",
+            name="longitude",
             field=models.DecimalField(decimal_places=6, max_digits=9, null=True),
         ),
         migrations.AlterField(
-            model_name='subproject',
-            name='cvds',
-            field=models.ManyToManyField(blank=True, default=[], related_name='cvds_subprojects', to='administrativelevels.cvd'),
+            model_name="subproject",
+            name="cvds",
+            field=models.ManyToManyField(
+                blank=True,
+                default=[],
+                related_name="cvds_subprojects",
+                to="administrativelevels.cvd",
+            ),
         ),
         migrations.AlterField(
-            model_name='subproject',
-            name='priorities',
-            field=models.ManyToManyField(blank=True, default=[], related_name='priorities_covered', to='subprojects.villagepriority'),
+            model_name="subproject",
+            name="priorities",
+            field=models.ManyToManyField(
+                blank=True,
+                default=[],
+                related_name="priorities_covered",
+                to="subprojects.villagepriority",
+            ),
         ),
     ]

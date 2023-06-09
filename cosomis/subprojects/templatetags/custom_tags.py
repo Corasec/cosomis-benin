@@ -4,20 +4,21 @@ from django.utils.translation import gettext_lazy
 register = template.Library()
 
 
-
 @register.filter(name="imgAWSS3Filter")
 def img_aws_s3_filter(uri):
     return uri.split("?")[0]
 
-@register.filter(name='has_group') 
-def has_group(user, group_name):
-    return user.groups.filter(name=group_name).exists() 
 
-@register.filter(name='get_group_high') 
+@register.filter(name="has_group")
+def has_group(user, group_name):
+    return user.groups.filter(name=group_name).exists()
+
+
+@register.filter(name="get_group_high")
 def get_group_high(user):
     """
     All Groups permissions
-        - SuperAdmin            : 
+        - SuperAdmin            :
         - CDD Specialist        : CDDSpecialist
         - Admin                 : Admin
         - Evaluator             : Evaluator
@@ -31,7 +32,7 @@ def get_group_high(user):
     """
     if user.is_superuser:
         return gettext_lazy("Principal Administrator").__str__()
-    
+
     if user.groups.filter(name="Admin").exists():
         return gettext_lazy("Administrator").__str__()
     if user.groups.filter(name="CDDSpecialist").exists():
@@ -53,8 +54,8 @@ def get_group_high(user):
     if user.groups.filter(name="Minister").exists():
         return gettext_lazy("Minister").__str__()
 
-
     return gettext_lazy("User").__str__()
+
 
 class MakeListNode(template.Node):
     def __init__(self, items, varname):
@@ -67,9 +68,10 @@ class MakeListNode(template.Node):
             if i.isdigit():
                 context[self.varname].append(int(i))
             else:
-                context[self.varname].append(str(i).replace('"', ''))
+                context[self.varname].append(str(i).replace('"', ""))
         return ""
-    
+
+
 @register.tag
 def make_list(parser, token):
     bits = list(token.split_contents())
@@ -78,4 +80,6 @@ def make_list(parser, token):
         items = bits[1:-2]
         return MakeListNode(items, varname)
     else:
-        raise template.TemplateSyntaxError("%r expected format is 'item [item ...] as varname'" % bits[0])
+        raise template.TemplateSyntaxError(
+            "%r expected format is 'item [item ...] as varname'" % bits[0]
+        )

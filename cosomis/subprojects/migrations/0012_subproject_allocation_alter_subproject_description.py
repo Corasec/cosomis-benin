@@ -4,20 +4,22 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('subprojects', '0011_alter_villagepriority_climate_changing_contribution_and_more'),
+        (
+            "subprojects",
+            "0011_alter_villagepriority_climate_changing_contribution_and_more",
+        ),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='subproject',
-            name='allocation',
+            model_name="subproject",
+            name="allocation",
             field=models.FloatField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='subproject',
-            name='description',
+            model_name="subproject",
+            name="description",
             field=models.TextField(blank=True, null=True),
         ),
     ]

@@ -267,7 +267,7 @@ class UploadCSVView(
             except Exception as exc:
                 messages.info(request, _("An error has occurred..."))
 
-            message = administrativelevels_functions.save_csv_file_datas_in_db(
+            message = administrativelevels_functions.save_adm_lvl_csv_datas_to_db(
                 datas
             )  # call function to save CSV datas in database
 

@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('subprojects', '0009_component_parent'),
+        ("subprojects", "0009_component_parent"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='villagepriority',
-            name='sector',
+            model_name="villagepriority",
+            name="sector",
             field=models.CharField(blank=True, max_length=255, null=True),
         ),
     ]

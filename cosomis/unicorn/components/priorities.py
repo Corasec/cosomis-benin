@@ -7,7 +7,16 @@ class PrioritiesView(UnicornView):
     components = []
     goals = []
     administrativelevel_village = None
-    def __init__(self, administrativelevel_village: object, priorities: list, components: list, goals: list,  *args, **kwargs):
+
+    def __init__(
+        self,
+        administrativelevel_village: object,
+        priorities: list,
+        components: list,
+        goals: list,
+        *args,
+        **kwargs
+    ):
         super().__init__(**kwargs)  # calling super is required
         self.administrativelevel_village = administrativelevel_village
         self.priorities = list(priorities)
@@ -31,7 +40,7 @@ class PrioritiesView(UnicornView):
 
     def remove(self, pk):
         for i in range(len(self.priorities)):
-            if self.priorities[i]['pk'] == pk:
+            if self.priorities[i]["pk"] == pk:
                 del self.priorities[i]
                 VillagePriority.objects.get(id=pk).delete()
                 break

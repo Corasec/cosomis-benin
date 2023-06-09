@@ -5,70 +5,103 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('administrativelevels', '0007_delete_village'),
-        ('subprojects', '0004_villagepriority_villageobstacle_villagegoal_typemain_and_more'),
+        ("administrativelevels", "0007_delete_village"),
+        (
+            "subprojects",
+            "0004_villagepriority_villageobstacle_villagegoal_typemain_and_more",
+        ),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='VillageMeeting',
+            name="VillageMeeting",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_date', models.DateTimeField(auto_now_add=True, null=True)),
-                ('updated_date', models.DateTimeField(auto_now=True, null=True)),
-                ('description', models.TextField()),
-                ('date_conducted', models.DateTimeField()),
-                ('administrative_level', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='administrativelevels.administrativelevel')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_date", models.DateTimeField(auto_now_add=True, null=True)),
+                ("updated_date", models.DateTimeField(auto_now=True, null=True)),
+                ("description", models.TextField()),
+                ("date_conducted", models.DateTimeField()),
+                (
+                    "administrative_level",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="administrativelevels.administrativelevel",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.RemoveField(
-            model_name='prioritiesmeeting',
-            name='administrative_level',
+            model_name="prioritiesmeeting",
+            name="administrative_level",
         ),
         migrations.RemoveField(
-            model_name='prioritiesmeeting',
-            name='village_goal',
+            model_name="prioritiesmeeting",
+            name="village_goal",
         ),
         migrations.RemoveField(
-            model_name='prioritiesmeeting',
-            name='village_obstacle',
+            model_name="prioritiesmeeting",
+            name="village_obstacle",
         ),
         migrations.RemoveField(
-            model_name='prioritiesmeeting',
-            name='village_priority',
+            model_name="prioritiesmeeting",
+            name="village_priority",
         ),
         migrations.AlterField(
-            model_name='subproject',
-            name='priorities',
-            field=models.ManyToManyField(blank=True, null=True, related_name='priorities_covered', to='subprojects.villagepriority'),
+            model_name="subproject",
+            name="priorities",
+            field=models.ManyToManyField(
+                blank=True,
+                null=True,
+                related_name="priorities_covered",
+                to="subprojects.villagepriority",
+            ),
         ),
         migrations.DeleteModel(
-            name='CommunityPriority',
+            name="CommunityPriority",
         ),
         migrations.DeleteModel(
-            name='PrioritiesMeeting',
+            name="PrioritiesMeeting",
         ),
         migrations.AddField(
-            model_name='villagegoal',
-            name='meeting',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='subprojects.villagemeeting'),
+            model_name="villagegoal",
+            name="meeting",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="subprojects.villagemeeting",
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='villageobstacle',
-            name='meeting',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='subprojects.villagemeeting'),
+            model_name="villageobstacle",
+            name="meeting",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="subprojects.villagemeeting",
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='villagepriority',
-            name='meeting',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.CASCADE, to='subprojects.villagemeeting'),
+            model_name="villagepriority",
+            name="meeting",
+            field=models.ForeignKey(
+                default=1,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="subprojects.villagemeeting",
+            ),
             preserve_default=False,
         ),
     ]

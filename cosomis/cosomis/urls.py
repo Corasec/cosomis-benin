@@ -28,26 +28,22 @@ from .views import set_language
 #     path('administrative-levels/', include('administrativelevels.urls')),
 #     path('unicorn/', include('django_unicorn.urls')),
 # ]
-urlpatterns = [
-    path('set-language/', 
-         set_language, 
-         name='set_language')
-]
+urlpatterns = [path("set-language/", set_language, name="set_language")]
 
 urlpatterns += i18n_patterns(
-    path('admin/', admin.site.urls),
-    path('', include('usermanager.urls')),
-    path('subprojects/', include('subprojects.urls')),
-    path('administrative-levels/', include('administrativelevels.urls')),
-    path('unicorn/', include('django_unicorn.urls')),
-    path('kobotoolbox/', include('kobotoolbox.urls')),
-
-    path('services/', include('administrativelevels.libraries.services.urls')),
+    path("admin/", admin.site.urls),
+    path("", include("usermanager.urls")),
+    path("subprojects/", include("subprojects.urls")),
+    path("administrative-levels/", include("administrativelevels.urls")),
+    path("unicorn/", include("django_unicorn.urls")),
+    path("kobotoolbox/", include("kobotoolbox.urls")),
+    path("services/", include("administrativelevels.libraries.services.urls")),
 )
 
 
 if settings.DEBUG:
     import debug_toolbar
-    urlpatterns += static(settings.STATIC_URL, document_root = settings.STATIC_ROOT)
-    urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += [path("__debug__/", include("debug_toolbar.urls"))]

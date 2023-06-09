@@ -13,40 +13,53 @@ from subprojects.models import Subproject, SubprojectImage
 
 class UploadSuprojectImageView(LoginRequiredMixin, generic.View):
     def post(self, request, *args, **kwargs):
-        object_id = int(request.POST.get('object_id'))
-        file = request.FILES.get('file')
+        object_id = int(request.POST.get("object_id"))
+        file = request.FILES.get("file")
         principal = bool(int(request.POST.get("principal")))
-        date_taken = request.POST.get('date_taken')
-        order = int(request.POST.get('order'))
-        name = request.POST.get('name')
+        date_taken = request.POST.get("date_taken")
+        order = int(request.POST.get("order"))
+        name = request.POST.get("name")
         subproject = None
         _ok = True
         if not object_id:
-            return HttpResponse(json.dumps({"message": _("We can't find the sub-projects").__str__()}), content_type="application/json")
-        
+            return HttpResponse(
+                json.dumps({"message": _("We can't find the sub-projects").__str__()}),
+                content_type="application/json",
+            )
+
         subproject = Subproject.objects.get(id=object_id)
         images = subproject.get_all_images()
         for img in images:
             if img.order == order:
                 _ok = False
                 break
-        
+
         if not _ok:
-            return HttpResponse(json.dumps({"message": _("There is already an image that has this order").__str__()}), content_type="application/json")
-            
+            return HttpResponse(
+                json.dumps(
+                    {
+                        "message": _(
+                            "There is already an image that has this order"
+                        ).__str__()
+                    }
+                ),
+                content_type="application/json",
+            )
+
         if object_id and file and date_taken and order and name:
-            file_directory_within_bucket = 'proof_of_work/'
+            file_directory_within_bucket = "proof_of_work/"
             file_path_within_bucket = os.path.join(
-                file_directory_within_bucket,
-                file.name+str(time.time())
+                file_directory_within_bucket, file.name + str(time.time())
             )
 
             media_storage = S3Boto3Storage()
 
-            if not media_storage.exists(file_path_within_bucket):  # avoid overwriting existing file
-                media_storage.save(file_path_within_bucket,file)
+            if not media_storage.exists(
+                file_path_within_bucket
+            ):  # avoid overwriting existing file
+                media_storage.save(file_path_within_bucket, file)
                 file_url = media_storage.url(file_path_within_bucket)
-                
+
                 if principal:
                     for img in images:
                         if img.principal:
@@ -65,29 +78,36 @@ class UploadSuprojectImageView(LoginRequiredMixin, generic.View):
                 image.name = name
                 image.save()
 
-                return HttpResponse(json.dumps({"message": _("Registered").__str__(), "ok": True}), content_type="application/json")
+                return HttpResponse(
+                    json.dumps({"message": _("Registered").__str__(), "ok": True}),
+                    content_type="application/json",
+                )
             else:
-                return HttpResponse(json.dumps({"message": _("We can't save the image").__str__()}), content_type="application/json")
-            
-        else:
-            return HttpResponse(json.dumps({"message": _("Please fill in all fields").__str__()}), content_type="application/json")
-        
+                return HttpResponse(
+                    json.dumps({"message": _("We can't save the image").__str__()}),
+                    content_type="application/json",
+                )
 
+        else:
+            return HttpResponse(
+                json.dumps({"message": _("Please fill in all fields").__str__()}),
+                content_type="application/json",
+            )
 
 
 class UpdateSuprojectImageView(LoginRequiredMixin, generic.View):
     def post(self, request, *args, **kwargs):
-        object_id = int(request.POST.get('object_id'))
-        image_id = int(request.POST.get('image_id'))
+        object_id = int(request.POST.get("object_id"))
+        image_id = int(request.POST.get("image_id"))
         principal = bool(int(request.POST.get("principal")))
-        date_taken = request.POST.get('date_taken')
-        order = int(request.POST.get('order'))
-        name = request.POST.get('name')
+        date_taken = request.POST.get("date_taken")
+        order = int(request.POST.get("order"))
+        name = request.POST.get("name")
         subproject = None
         _ok = True
 
         image = SubprojectImage.objects.get(id=image_id)
-        
+
         subproject = Subproject.objects.get(id=object_id)
         images = subproject.get_all_images()
 
@@ -96,10 +116,19 @@ class UpdateSuprojectImageView(LoginRequiredMixin, generic.View):
                 if img.order == order:
                     _ok = False
                     break
-        
+
         if not _ok:
-            return HttpResponse(json.dumps({"message": _("There is already an image that has this order").__str__()}), content_type="application/json")
-            
+            return HttpResponse(
+                json.dumps(
+                    {
+                        "message": _(
+                            "There is already an image that has this order"
+                        ).__str__()
+                    }
+                ),
+                content_type="application/json",
+            )
+
         if order and name:
             if principal:
                 for img in images:
@@ -118,9 +147,13 @@ class UpdateSuprojectImageView(LoginRequiredMixin, generic.View):
             image.name = name
             image.save()
 
-            return HttpResponse(json.dumps({"message": _("Registered").__str__(), "ok": True}), content_type="application/json")
-           
+            return HttpResponse(
+                json.dumps({"message": _("Registered").__str__(), "ok": True}),
+                content_type="application/json",
+            )
+
         else:
-            return HttpResponse(json.dumps({"message": _("Please fill in all fields").__str__()}), content_type="application/json")
-        
-        
+            return HttpResponse(
+                json.dumps({"message": _("Please fill in all fields").__str__()}),
+                content_type="application/json",
+            )

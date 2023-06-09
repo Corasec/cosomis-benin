@@ -1,5 +1,13 @@
 from django.contrib import admin
-from .models import Subproject, VillageGoal, VillageObstacle, VulnerableGroup, VillagePriority, VillageMeeting, Component
+from .models import (
+    Subproject,
+    VillageGoal,
+    VillageObstacle,
+    VulnerableGroup,
+    VillagePriority,
+    VillageMeeting,
+    Component,
+)
 
 # Register your models here.
 admin.site.register(Subproject)

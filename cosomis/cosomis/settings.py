@@ -22,6 +22,7 @@ try:
     from .local_settings import *  # noqa: F403
 except ImportError:
     from .local_settings_template import *  # noqa: F403
+
     print("No local_settings.py, used .local_settings_template")
 
 # https://django-environ.readthedocs.io/en/latest/
@@ -36,91 +37,88 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY')
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool('DEBUG', False)
+DEBUG = env.bool("DEBUG", False)
 
-ALLOWED_HOSTS = env('ALLOWED_HOSTS', list, ['localhost'])
+ALLOWED_HOSTS = env("ALLOWED_HOSTS", list, ["localhost"])
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
 ]
 
 CREATED_APPS = [
-    'usermanager',
-    'subprojects',
-    'administrativelevels',
-    'unicorn',
-    'kobotoolbox',
+    "usermanager",
+    "subprojects",
+    "administrativelevels",
+    "unicorn",
+    "kobotoolbox",
 ]
 
 THIRD_PARTY_APPS = [
-    'bootstrap4',
-    'django_unicorn',
-    'django_celery_results',
-    'drf_spectacular',
-    'rest_framework',
+    "bootstrap4",
+    "django_unicorn",
+    "django_celery_results",
+    "drf_spectacular",
+    "rest_framework",
 ]
 
 INSTALLED_APPS += CREATED_APPS + THIRD_PARTY_APPS + LOCAL_INSTALLED_APPS
 
 MIDDLEWARE = LOCAL_MIDDLEWARE + [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware', #tries to determine user's language using URL language prefix
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",  # tries to determine user's language using URL language prefix
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'cosomis.urls'
+ROOT_URLCONF = "cosomis.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['cosomis/templates'],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-
-                'cosomis.services.overall_variables' #Called the function which presents the globals variables
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": ["cosomis/templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+                "cosomis.services.overall_variables",  # Called the function which presents the globals variables
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'cosomis.wsgi.application'
+WSGI_APPLICATION = "cosomis.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
-DATABASES = {
-    'default': env.db()
-}
+DATABASES = {"default": env.db()}
 
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-LANGUAGE_CODE = 'en'
+LANGUAGE_CODE = "en"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -128,66 +126,66 @@ USE_L10N = True
 
 USE_TZ = True
 
-LOCALE_PATHS = [os.path.join(BASE_DIR, 'locale')]
+LOCALE_PATHS = [os.path.join(BASE_DIR, "locale")]
 
 LANGUAGES = [
-    ('en', _('English')), 
-    ('fr', _('French')), 
+    ("en", _("English")),
+    ("fr", _("French")),
 ]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-LOGIN_URL = '/'
+LOGIN_URL = "/"
 
-LOGIN_REDIRECT_URL = 'subprojects:list'
+LOGIN_REDIRECT_URL = "subprojects:list"
 
 
 # Mapbox
-MAPBOX_ACCESS_TOKEN = env('MAPBOX_ACCESS_TOKEN')
+MAPBOX_ACCESS_TOKEN = env("MAPBOX_ACCESS_TOKEN")
 
-DIAGNOSTIC_MAP_LATITUDE = env('DIAGNOSTIC_MAP_LATITUDE')
+DIAGNOSTIC_MAP_LATITUDE = env("DIAGNOSTIC_MAP_LATITUDE")
 
-DIAGNOSTIC_MAP_LONGITUDE = env('DIAGNOSTIC_MAP_LONGITUDE')
+DIAGNOSTIC_MAP_LONGITUDE = env("DIAGNOSTIC_MAP_LONGITUDE")
 
-DIAGNOSTIC_MAP_ZOOM = env('DIAGNOSTIC_MAP_ZOOM')
+DIAGNOSTIC_MAP_ZOOM = env("DIAGNOSTIC_MAP_ZOOM")
 
-DIAGNOSTIC_MAP_WS_BOUND = env('DIAGNOSTIC_MAP_WS_BOUND')
+DIAGNOSTIC_MAP_WS_BOUND = env("DIAGNOSTIC_MAP_WS_BOUND")
 
-DIAGNOSTIC_MAP_EN_BOUND = env('DIAGNOSTIC_MAP_EN_BOUND')
+DIAGNOSTIC_MAP_EN_BOUND = env("DIAGNOSTIC_MAP_EN_BOUND")
 
-DIAGNOSTIC_MAP_ISO_CODE = env('DIAGNOSTIC_MAP_ISO_CODE')
+DIAGNOSTIC_MAP_ISO_CODE = env("DIAGNOSTIC_MAP_ISO_CODE")
 
 
 # CouchDB
 
-NO_SQL_USER = env('NO_SQL_USER')
+NO_SQL_USER = env("NO_SQL_USER")
 
-NO_SQL_PASS = env('NO_SQL_PASS')
+NO_SQL_PASS = env("NO_SQL_PASS")
 
-NO_SQL_URL = env('NO_SQL_URL')
+NO_SQL_URL = env("NO_SQL_URL")
 
 
 # S3
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
-AWS_STORAGE_BUCKET_NAME = env('S3_BUCKET')
+AWS_STORAGE_BUCKET_NAME = env("S3_BUCKET")
 
-AWS_ACCESS_KEY_ID = env('S3_ACCESS')
+AWS_ACCESS_KEY_ID = env("S3_ACCESS")
 
-AWS_SECRET_ACCESS_KEY = env('S3_SECRET')
+AWS_SECRET_ACCESS_KEY = env("S3_SECRET")
 
-#REST API
+# REST API
 REST_FRAMEWORK = {
     # https://github.com/tfranzel/drf-spectacular
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }

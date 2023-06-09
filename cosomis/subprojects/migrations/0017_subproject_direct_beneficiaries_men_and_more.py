@@ -4,41 +4,48 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('administrativelevels', '0017_cvd_name'),
-        ('subprojects', '0016_remove_subproject_allocation_remove_subproject_cvds_and_more'),
+        ("administrativelevels", "0017_cvd_name"),
+        (
+            "subprojects",
+            "0016_remove_subproject_allocation_remove_subproject_cvds_and_more",
+        ),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='subproject',
-            name='direct_beneficiaries_men',
+            model_name="subproject",
+            name="direct_beneficiaries_men",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='subproject',
-            name='direct_beneficiaries_women',
+            model_name="subproject",
+            name="direct_beneficiaries_women",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='subproject',
-            name='indirect_beneficiaries_men',
+            model_name="subproject",
+            name="indirect_beneficiaries_men",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='subproject',
-            name='indirect_beneficiaries_women',
+            model_name="subproject",
+            name="indirect_beneficiaries_women",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='subproject',
-            name='list_of_villages_crossed_by_the_track_or_electrification',
-            field=models.ManyToManyField(blank=True, default=[], related_name='cantonal_subprojects', to='administrativelevels.administrativelevel'),
+            model_name="subproject",
+            name="list_of_villages_crossed_by_the_track_or_electrification",
+            field=models.ManyToManyField(
+                blank=True,
+                default=[],
+                related_name="cantonal_subprojects",
+                to="administrativelevels.administrativelevel",
+            ),
         ),
         migrations.AddField(
-            model_name='subproject',
-            name='population',
+            model_name="subproject",
+            name="population",
             field=models.IntegerField(blank=True, null=True),
         ),
     ]

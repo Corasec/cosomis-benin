@@ -4,35 +4,34 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('subprojects', '0010_alter_villagepriority_sector'),
+        ("subprojects", "0010_alter_villagepriority_sector"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='villagepriority',
-            name='climate_changing_contribution',
+            model_name="villagepriority",
+            name="climate_changing_contribution",
             field=models.TextField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='villagepriority',
-            name='estimated_beneficiaries',
+            model_name="villagepriority",
+            name="estimated_beneficiaries",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='villagepriority',
-            name='estimated_cost',
+            model_name="villagepriority",
+            name="estimated_cost",
             field=models.FloatField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='villagepriority',
-            name='proposed_men',
+            model_name="villagepriority",
+            name="proposed_men",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='villagepriority',
-            name='proposed_women',
+            model_name="villagepriority",
+            name="proposed_women",
             field=models.IntegerField(blank=True, null=True),
         ),
     ]
