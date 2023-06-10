@@ -1,27 +1,23 @@
-
 FROM python:3.10-bullseye
 
-# python output set straight to the terminal 
-# without buffering it first
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1  
 
-# create root directory for mis app in the container
-RUN mkdir /mis_app
+RUN pip install --upgrade pip
 
-# set the working directory to /mis_app
-WORKDIR /mis_app
+# create app directory.
+RUN mkdir -p /usr/appserver
+WORKDIR /usr/appserver
 
-# copy current directory contents into container at /mis_app
-COPY . /mis_app/
-
-# update pip
-RUN pip install -U pip
-
+# install requirement
 COPY requirements.txt .
+RUN pip install -r requirements.txt  
 
-# install any needed packages specified in requirements.txt
-RUN pip install -r requirements.txt
+# copy all the code
+COPY . .
 
-RUN pip install gunicorn
+EXPOSE 9000
 
-CMD ["gunicorn", "cosomis.wsgi:application", "--bind 0.0.0.0:8080"]
+ENTRYPOINT [ "./run.sh" ]
+
+CMD [ "serve" ]

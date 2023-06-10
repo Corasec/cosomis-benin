@@ -18,7 +18,7 @@ Install application
 
 Start Application
 
-- Create a local environment file (customize according to your needs) from the provided template: `cp cosomis/example.env cdd/.env`. For example fill database credentials
+- Create a local environment file (customize according to your needs) from the provided template: `cp cosomis/example.env cosomis/.env`. For example fill database credentials
 - Do the same for `local_settings.py`: `cp cosomis/local_settings.py local_settings_template.py`
 - `python3 manage.py migrate`
 - `python3 manage.py runserver`
