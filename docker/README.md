@@ -15,8 +15,8 @@ docker compose --env-file ./deployment.env up
 
 ```bash
 cd cosomis/
-docker build . -t corasec/mis-app:latest
-docker push corasec/mis-app:latest
+docker build . -t cosobenin/mis-app:latest
+docker push cosobenin/mis-app:latest
 
 # copy static files
  cp -R ./static ../docker/app/data/static

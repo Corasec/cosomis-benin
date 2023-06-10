@@ -22,3 +22,9 @@ Start Application
 - Do the same for `local_settings.py`: `cp cosomis/local_settings.py local_settings_template.py`
 - `python3 manage.py migrate`
 - `python3 manage.py runserver`
+
+## Manually loading .emv file
+
+```bash
+export $(cat .env | xargs)
+```
