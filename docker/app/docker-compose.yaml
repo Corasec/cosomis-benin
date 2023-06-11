@@ -24,14 +24,8 @@ services:
       DIAGNOSTIC_MAP_WS_BOUND: '${DIAGNOSTIC_MAP_WS_BOUND}'
       DIAGNOSTIC_MAP_EN_BOUND: '${DIAGNOSTIC_MAP_EN_BOUND}'
       DIAGNOSTIC_MAP_ISO_CODE: '${DIAGNOSTIC_MAP_ISO_CODE}'
-
-    # working_dir: /var/www
-    # volumes:
-    #   - ./:/var/www
-    # networks:
-    #   - app-network
-    # extra_hosts:
-    # - "host.docker.internal:host-gateway"
+    volumes:
+      - static-content:/usr/appserver/static
 
   nginx:
     image: nginx:alpine
@@ -43,13 +37,11 @@ services:
     network_mode: "host"
     volumes:
       - ./data/nginx:/etc/nginx/conf.d
-      - ./data/static:/var/www/app/static
+      - static-content:/var/www/app/static
       # - ./data/certbot/conf:/etc/letsencrypt
       # - ./data/certbot/www:/var/www/certbot
-    # networks:
-    #   - app-network
-    # extra_hosts:
-    # - "host.docker.internal:host-gateway"
+    depends_on:
+      - dango-app
 
   # certbot:
   #   image: certbot/certbot
@@ -59,6 +51,5 @@ services:
   #     - ./data/certbot/www:/var/www/certbot
   #   entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
-# networks:
-#   app-network:
-#     driver: bridge
+volumes:
+  static-content:

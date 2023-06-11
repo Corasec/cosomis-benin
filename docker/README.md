@@ -17,9 +17,6 @@ docker compose --env-file ./deployment.env up
 cd cosomis/
 docker build . -t cosobenin/mis-app:latest
 docker push cosobenin/mis-app:latest
-
-# copy static files
- cp -R ./static ../docker/app/data/static
 ```
 ssl doc: https://pentacent.medium.com/nginx-and-lets-encrypt-with-docker-in-less-than-5-minutes-b4b8a60d3a71
 
