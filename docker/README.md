@@ -1,5 +1,4 @@
-## Task for @florentin:
-You need to write the different steps to deploy the database for someone taking over the repo
+## Deploying from  compose
 
 ```bash
 docker compose --env-file ./deployment.env config
@@ -12,6 +11,7 @@ docker compose --env-file ./deployment.env up
 
 ```bash
 cd cosomis/
+docker login # using cosobenin dockerhub account
 docker build . -t cosobenin/mis-app:latest
 docker push cosobenin/mis-app:latest
 ```
@@ -21,17 +21,10 @@ docker push cosobenin/mis-app:latest
 ```bash
 cd docker/app
 
-# update the deployment.env
+# update the deployment.env -> .env
 
-# initiate the certificate
-sudo ./init-letsencrypt.sh
-
-# check if `/data/certbot/conf` contains the certificates
 docker compose --env-file ./deployment.env up
-
 ```
 
-
-ssl_doc: https://pentacent.medium.com/nginx-and-lets-encrypt-with-docker-in-less-than-5-minutes-b4b8a60d3a71
 
 
