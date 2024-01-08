@@ -4,13 +4,12 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('administrativelevels', '0006_remove_administrativelevel_village_and_more'),
+        ("administrativelevels", "0006_remove_administrativelevel_village_and_more"),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='Village',
+            name="Village",
         ),
     ]

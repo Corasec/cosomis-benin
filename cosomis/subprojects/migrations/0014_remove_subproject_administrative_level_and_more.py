@@ -4,20 +4,24 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('administrativelevels', '0009_unitgeographic_cvd_administrativelevel_cvd'),
-        ('subprojects', '0013_alter_subproject_created_date_and_more'),
+        ("administrativelevels", "0009_unitgeographic_cvd_administrativelevel_cvd"),
+        ("subprojects", "0013_alter_subproject_created_date_and_more"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='subproject',
-            name='administrative_level',
+            model_name="subproject",
+            name="administrative_level",
         ),
         migrations.AddField(
-            model_name='subproject',
-            name='cvds',
-            field=models.ManyToManyField(blank=True, null=True, related_name='cvds_subprojects', to='administrativelevels.cvd'),
+            model_name="subproject",
+            name="cvds",
+            field=models.ManyToManyField(
+                blank=True,
+                null=True,
+                related_name="cvds_subprojects",
+                to="administrativelevels.cvd",
+            ),
         ),
     ]

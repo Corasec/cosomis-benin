@@ -5,32 +5,45 @@
     <div class="row">
         <div class="col-12">
             <div >
-                <div class="row">
-                    <div class="col-5" class="input-group mb-3 search-bar">
-                        <div method="get" class="d-flex">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text"><i class="fas fa-search"></i></span>
-                            </div>
-                            <input class="form-control" id="search" placeholder="{% translate 'Search in table' %}...">
+                {% if user.is_superuser or user|has_group:"Admin" %}
+                    <div> &nbsp; &nbsp; </div>
+                    <div class="mb-2" style="display: inline-block;">
+                        <button class="btn btn-primary" style="display: inline-block;" 
+                            type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {% translate 'Create Administrative level' %}
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        
+                            <a class="dropdown-item" href="{% url 'administrativelevels:create' %}?type=village">
+                            Village
+                            </a>
+                            <a class="dropdown-item" href="{% url 'administrativelevels:create' %}?type=arrondissement">
+                            Arrondissement
+                            </a>
+                            <a class="dropdown-item" href="{% url 'administrativelevels:create' %}?type=commune">
+                            Commune
+                            </a>
+                            <a class="dropdown-item" href="{% url 'administrativelevels:create' %}?type=département">
+                            Département
+                            </a>
                         </div>
                     </div>
-                    <div class="col-6" class="input-group mb-3 search-bar">
+                {% endif %}
+
+                <div class="row">
+                    
+                    <div class="col-9" class="input-group mb-3 search-bar">
+                        
                         <form method="get" class="d-flex">
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-search"></i></span>
                             </div>
                             <input type="hidden" name="type" value="{{ type }}">
-                            <input class="form-control" name="search" placeholder="{% translate 'Search in database' %}...">
+                            <input class="form-control" name="search" placeholder="{{ search }}">
                             <input class="btn btn-primary" type="submit" value="{% translate 'Search' %}">
                         </form>
                     </div>
-                    <div class="col-1" class="input-group mb-3 search-bar">
-                        <form method="get" class="d-flex">
-                            <input type="hidden" name="search" value="All">
-                            <input type="hidden" name="type" value="{{ type }}">
-                            <input class="btn btn-primary" type="submit" value="{% translate 'All' %}">
-                        </form>
-                    </div>
+                    
                 </div>
             </div>
             <div class="card">
@@ -38,61 +51,43 @@
                     <div class="col-md-12">
                         <div class="btn-group pull-left">
                             <div class="" style="display: inline-block;">
-                                <button class="btn btn-primary" style="display: inline-block;" 
+                                <button class="btn btn-primary btn-md dropdown-toggle" style="display: inline-block;" 
                                     type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    {% translate 'Others' %}
+                                    {{ type|title }}
                                 </button>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                                 
-                                    <a class="dropdown-item" href="?type=Village">
+                                    <a class="dropdown-item" href="?type=village">
                                     Village
                                     </a>
-                                    <a class="dropdown-item" href="?type=Canton">
-                                    Canton
+                                    <a class="dropdown-item" href="?type=arrondissement">
+                                    Arrondissement
                                     </a>
-                                    <a class="dropdown-item" href="?type=Commune">
+                                    <a class="dropdown-item" href="?type=commune">
                                     Commune
                                     </a>
-                                    <a class="dropdown-item" href="?type=Prefecture">
-                                    Prefecture
-                                    </a>
-                                    <a class="dropdown-item" href="?type=Region">
-                                    Region
+                                    <a class="dropdown-item" href="?type=département">
+                                    Département
                                     </a>
                                 </div>
                             </div>
-                            {% if user.is_superuser or user|has_group:"Admin" %}
-                            <div> &nbsp; &nbsp; </div>
-                            <div class="" style="display: inline-block;">
-                                <button class="btn btn-primary" style="display: inline-block;" 
-                                    type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    {% translate 'Create Administrative level' %}
-                                </button>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                
-                                    <a class="dropdown-item" href="{% url 'administrativelevels:create' %}?type=Village">
-                                    Village
-                                    </a>
-                                    <a class="dropdown-item" href="{% url 'administrativelevels:create' %}?type=Canton">
-                                    Canton
-                                    </a>
-                                    <a class="dropdown-item" href="{% url 'administrativelevels:create' %}?type=Commune">
-                                    Commune
-                                    </a>
-                                    <a class="dropdown-item" href="{% url 'administrativelevels:create' %}?type=Prefecture">
-                                    Prefecture
-                                    </a>
-                                    <a class="dropdown-item" href="{% url 'administrativelevels:create' %}?type=Region">
-                                    Region
-                                    </a>
+                            <div class="row" class="input-group mb-3 search-bar">
+                                <div method="get" class="d-flex ml-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                    </div>
+                                    <input class="form-control" id="search" placeholder="{% translate 'Search in table' %}...">
+                                </div>
+                                <div class="" class="input-group mb-3 search-bar">
+                                    <form method="get" class="d-flex">
+                                        <input type="hidden" name="search" value="">
+                                        <input type="hidden" name="type" value="{{ type }}">
+                                        <input class="btn btn-primary" type="submit" value="{% translate 'All' %}">
+                                    </form>
                                 </div>
                             </div>
-                            {% endif %}
+                            
 
-                            <div> &nbsp; &nbsp; </div>
-                            <a class="btn btn-primary" href="{% url 'administrativelevels:geographical_units_list' %}">{% translate 'Geographical unit' %}</a>
-                            <div> &nbsp; &nbsp; </div>
-                            <a class="btn btn-primary" href="{% url 'administrativelevels:cvds_list' %}">{% translate 'CVD' %}</a>
                         </div>
 
                         <div class="btn-group pull-right">
@@ -104,20 +99,28 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="card-body table-responsive">
-                    {% make_list "Village" as begin_village %}
-                    {% make_list "Village" "Canton" as begin_canton %}
-                    {% make_list "Village" "Canton" "Commune" as begin_commune %}
-                    {% make_list "Village" "Canton" "Commune" "Prefecture" as begin_prefecture %}
-                    {% make_list "Village" "Canton" "Commune" "Prefecture" "Region" as begin_region %}
+                    
                     <table id="table" class="table">
                         <thead>
                         <tr>
-                            {% if type in begin_village %}<th>{% translate 'Village' %}</th>{% endif %}
-                            {% if type in begin_canton %}<th>{% translate 'Canton' %}</th>{% endif %}
-                            {% if type in begin_commune %}<th>{% translate 'Commune' %}</th>{% endif %}
-                            {% if type in begin_prefecture %}<th>{% translate 'Prefecture' %}</th>{% endif %}
-                            <th>{% translate 'Region' %}</th>
+                            {% if type == "village" %}
+                            <th>{% translate 'Village' %}</th>
+                            {% endif %}
+
+                            {% if type == "arrondissement" or type == "village" %}
+                            <th>{% translate 'Arrondissement' %}</th>
+                            {% endif %}
+
+                            {% if type == "commune" or type == "arrondissement" or type == "village" %}
+                            <th>{% translate 'Commune' %}</th>
+                            {% endif %}
+
+                            {% if type == "département" or type == "commune" or type == "arrondissement" or type == "village" %}
+                            <th>{% translate 'Département' %}</th>
+                            {% endif %}
+
                             <th>{% translate 'Action' %}</th>
                         </tr>
                         </thead>
@@ -125,10 +128,15 @@
                         {% for administrativelevel in administrativelevels %}
                             <tr>
                                 <td>{{ administrativelevel.name }}</td>
-                                {% if type in begin_prefecture %}<td>{{ administrativelevel.parent.name }}</td>{% endif %}
-                                {% if type in begin_commune %}<td>{{ administrativelevel.parent.parent.name }}</td>{% endif %}
-                                {% if type in begin_canton %}<td>{{ administrativelevel.parent.parent.parent.name }}</td>{% endif %}
-                                {% if type in begin_village %}<td>{{ administrativelevel.parent.parent.parent.parent.name }}</td>{% endif %}
+                                {% if administrativelevel.parent %}
+                                    <td>{{ administrativelevel.parent.name }}</td>
+                                    {% if administrativelevel.parent.parent %}
+                                        <td>{{ administrativelevel.parent.parent.name }}</td>
+                                        {% if administrativelevel.parent.parent.parent %}
+                                            <td>{{ administrativelevel.parent.parent.parent.name }}</td>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endif %}
                                 <td>
                                      {% comment %} <a href="{% url 'administrativelevels:village_detail' administrativelevel.pk %}"
                                        class="btn btn-primary btn-xs">

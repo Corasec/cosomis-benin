@@ -5,25 +5,29 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('administrativelevels', '0002_administrativelevel_created_date_and_more'),
+        ("administrativelevels", "0002_administrativelevel_created_date_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='administrativelevel',
-            name='latitude',
+            model_name="administrativelevel",
+            name="latitude",
             field=models.DecimalField(decimal_places=6, max_digits=9, null=True),
         ),
         migrations.AlterField(
-            model_name='administrativelevel',
-            name='longitude',
+            model_name="administrativelevel",
+            name="longitude",
             field=models.DecimalField(decimal_places=6, max_digits=9, null=True),
         ),
         migrations.AlterField(
-            model_name='administrativelevel',
-            name='parent',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='administrativelevels.administrativelevel'),
+            model_name="administrativelevel",
+            name="parent",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="administrativelevels.administrativelevel",
+            ),
         ),
     ]

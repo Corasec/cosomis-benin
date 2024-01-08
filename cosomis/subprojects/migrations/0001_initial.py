@@ -5,47 +5,85 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('administrativelevels', '0002_administrativelevel_created_date_and_more'),
+        ("administrativelevels", "0002_administrativelevel_created_date_and_more"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='CommunityPriority',
+            name="CommunityPriority",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('description', models.TextField()),
-                ('created_date', models.DateTimeField(auto_now_add=True)),
-                ('updated_date', models.DateTimeField(auto_now=True)),
-                ('administrative_level', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='administrativelevels.administrativelevel')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("description", models.TextField()),
+                ("created_date", models.DateTimeField(auto_now_add=True)),
+                ("updated_date", models.DateTimeField(auto_now=True)),
+                (
+                    "administrative_level",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="administrativelevels.administrativelevel",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='VulnerableGroup',
+            name="VulnerableGroup",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('description', models.TextField()),
-                ('created_date', models.DateTimeField(auto_now_add=True)),
-                ('updated_date', models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("description", models.TextField()),
+                ("created_date", models.DateTimeField(auto_now_add=True)),
+                ("updated_date", models.DateTimeField(auto_now=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Subproject',
+            name="Subproject",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_date', models.DateTimeField(auto_now_add=True)),
-                ('updated_date', models.DateTimeField(auto_now=True)),
-                ('target_female_beneficiaries', models.IntegerField()),
-                ('target_male_beneficiaries', models.IntegerField()),
-                ('target_youth_beneficiaries', models.IntegerField()),
-                ('component', models.CharField(max_length=255)),
-                ('sub_component', models.CharField(max_length=255)),
-                ('administrative_level', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='administrativelevels.administrativelevel')),
-                ('priorities', models.ManyToManyField(to='subprojects.communitypriority')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_date", models.DateTimeField(auto_now_add=True)),
+                ("updated_date", models.DateTimeField(auto_now=True)),
+                ("target_female_beneficiaries", models.IntegerField()),
+                ("target_male_beneficiaries", models.IntegerField()),
+                ("target_youth_beneficiaries", models.IntegerField()),
+                ("component", models.CharField(max_length=255)),
+                ("sub_component", models.CharField(max_length=255)),
+                (
+                    "administrative_level",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="administrativelevels.administrativelevel",
+                    ),
+                ),
+                (
+                    "priorities",
+                    models.ManyToManyField(to="subprojects.communitypriority"),
+                ),
             ],
         ),
     ]

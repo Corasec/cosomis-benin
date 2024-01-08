@@ -18,24 +18,23 @@ from django import forms
 from subprojects import functions as subprojects_functions
 from administrativelevels.libraries import download_file
 from usermanager.permissions import (
-    CDDSpecialistPermissionRequiredMixin, SuperAdminPermissionRequiredMixin,
-    AdminPermissionRequiredMixin
-    )
+    CDDSpecialistPermissionRequiredMixin,
+    SuperAdminPermissionRequiredMixin,
+    AdminPermissionRequiredMixin,
+)
 
 # Create your views here.
 
+
 class SubprojectsListView(PageMixin, LoginRequiredMixin, generic.ListView):
     model = Subproject
-    queryset = [] #Subproject.objects.all()
-    template_name = 'subprojects_list.html'
-    context_object_name = 'subprojects'
-    title = _('Subprojects')
-    active_level1 = 'subprojects'
+    queryset = []  # Subproject.objects.all()
+    template_name = "subprojects_list.html"
+    context_object_name = "subprojects"
+    title = _("Subprojects")
+    active_level1 = "subprojects"
     breadcrumb = [
-        {
-            'url': '',
-            'title': title
-        },
+        {"url": "", "title": title},
     ]
 
     # def get_queryset(self):
@@ -51,49 +50,56 @@ class SubprojectsListView(PageMixin, LoginRequiredMixin, generic.ListView):
             search = search.upper()
             return Paginator(
                 Subproject.objects.filter(
-                    Q(link_to_subproject=None, full_title_of_approved_subproject__icontains=search) | 
-                    Q(link_to_subproject=None, location_subproject_realized__name__icontains=search) | 
-                    Q(link_to_subproject=None, subproject_sector__icontains=search) | 
-                    Q(link_to_subproject=None, type_of_subproject__icontains=search) | 
-                    Q(link_to_subproject=None, works_type__icontains=search) | 
-                    Q(link_to_subproject=None, cvd__name__icontains=search) | 
-                    Q(link_to_subproject=None, facilitator_name__icontains=search)
-                ), 100).get_page(page_number)
+                    Q(
+                        link_to_subproject=None,
+                        full_title_of_approved_subproject__icontains=search,
+                    )
+                    | Q(
+                        link_to_subproject=None,
+                        location_subproject_realized__name__icontains=search,
+                    )
+                    | Q(link_to_subproject=None, subproject_sector__icontains=search)
+                    | Q(link_to_subproject=None, type_of_subproject__icontains=search)
+                    | Q(link_to_subproject=None, works_type__icontains=search)
+                    | Q(link_to_subproject=None, cvd__name__icontains=search)
+                    | Q(link_to_subproject=None, facilitator_name__icontains=search)
+                ),
+                100,
+            ).get_page(page_number)
         else:
-            return Paginator(Subproject.objects.filter(link_to_subproject=None), 100).get_page(page_number)
-        
+            return Paginator(
+                Subproject.objects.filter(link_to_subproject=None), 100
+            ).get_page(page_number)
+
     def get_context_data(self, **kwargs):
         ctx = super(SubprojectsListView, self).get_context_data(**kwargs)
-        ctx['search'] = self.request.GET.get("search", None)
+        ctx["search"] = self.request.GET.get("search", None)
         all = Subproject.objects.all()
-        ctx['total'] = all.count()
-        ctx['total_without_link'] = all.filter(link_to_subproject=None).count()
+        ctx["total"] = all.count()
+        ctx["total_without_link"] = all.filter(link_to_subproject=None).count()
         return ctx
 
-class SubprojectsMapView(LoginRequiredMixin, generic.ListView):
 
+class SubprojectsMapView(LoginRequiredMixin, generic.ListView):
     model = Subproject
     queryset = Subproject.objects.all()
-    template_name = 'subprojects_map.html'
-    context_object_name = 'subprojects'
-    title = _('Subprojects')
-    active_level1 = 'subprojects'
+    template_name = "subprojects_map.html"
+    context_object_name = "subprojects"
+    title = _("Subprojects")
+    active_level1 = "subprojects"
     breadcrumb = [
-        {
-            'url': '',
-            'title': title
-        },
+        {"url": "", "title": title},
     ]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['access_token'] = settings.MAPBOX_ACCESS_TOKEN
-        context['lat'] = settings.DIAGNOSTIC_MAP_LATITUDE
-        context['lng'] = settings.DIAGNOSTIC_MAP_LONGITUDE
-        context['zoom'] = settings.DIAGNOSTIC_MAP_ZOOM
-        context['ws_bound'] = settings.DIAGNOSTIC_MAP_WS_BOUND
-        context['en_bound'] = settings.DIAGNOSTIC_MAP_EN_BOUND
-        context['country_iso_code'] = settings.DIAGNOSTIC_MAP_ISO_CODE
+        context["access_token"] = settings.MAPBOX_ACCESS_TOKEN
+        context["lat"] = settings.DIAGNOSTIC_MAP_LATITUDE
+        context["lng"] = settings.DIAGNOSTIC_MAP_LONGITUDE
+        context["zoom"] = settings.DIAGNOSTIC_MAP_ZOOM
+        context["ws_bound"] = settings.DIAGNOSTIC_MAP_WS_BOUND
+        context["en_bound"] = settings.DIAGNOSTIC_MAP_EN_BOUND
+        context["country_iso_code"] = settings.DIAGNOSTIC_MAP_ISO_CODE
         return context
 
     def render_to_response(self, context, **response_kwargs):
@@ -102,7 +108,7 @@ class SubprojectsMapView(LoginRequiredMixin, generic.ListView):
         template rendered with the given context.
         Pass response_kwargs to the constructor of the response class.
         """
-        response_kwargs.setdefault('content_type', self.content_type)
+        response_kwargs.setdefault("content_type", self.content_type)
         return self.response_class(
             request=self.request,
             template=self.get_template_names(),
@@ -114,102 +120,88 @@ class SubprojectsMapView(LoginRequiredMixin, generic.ListView):
 
 class SubprojectDetailView(LoginRequiredMixin, generic.DetailView):
     model = Subproject
-    template_name = 'subproject.html'
-    context_object_name = 'subproject'
-    title = _('Subproject')
-    active_level1 = 'subprojects'
+    template_name = "subproject.html"
+    context_object_name = "subproject"
+    title = _("Subproject")
+    active_level1 = "subprojects"
     breadcrumb = [
-        {
-            'url': '',
-            'title': title
-        },
+        {"url": "", "title": title},
     ]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['preview_page'] = reverse_lazy('subprojects:list')
-        context['object_tile'] = _('Subproject Detail').__str__()
+        context["preview_page"] = reverse_lazy("subprojects:list")
+        context["object_tile"] = _("Subproject Detail").__str__()
         return context
 
 
-class SubprojectCreateView(PageMixin, LoginRequiredMixin, AdminPermissionRequiredMixin, generic.CreateView):
+class SubprojectCreateView(
+    PageMixin, LoginRequiredMixin, AdminPermissionRequiredMixin, generic.CreateView
+):
     model = Subproject
-    template_name = 'subproject_create.html'
-    context_object_name = 'subproject'
-    title = _('Create Subproject')
-    active_level1 = 'subprojects'
+    template_name = "subproject_create.html"
+    context_object_name = "subproject"
+    title = _("Create Subproject")
+    active_level1 = "subprojects"
     breadcrumb = [
-        {
-            'url': reverse_lazy('subprojects:list'),
-            'title': _('subprojects')
-        },
-        {
-            'url': '',
-            'title': title
-        },
+        {"url": reverse_lazy("subprojects:list"), "title": _("subprojects")},
+        {"url": "", "title": title},
     ]
- 
-    form_class = SubprojectForm # specify the class form to be displayed
+
+    form_class = SubprojectForm  # specify the class form to be displayed
 
     def post(self, request, *args, **kwargs):
         form = SubprojectForm(request.POST)
         if form.is_valid():
             subproject = form.save()
             subproject.save()
-            return redirect('subprojects:list')
+            return redirect("subprojects:list")
         return super(SubprojectCreateView, self).get(request, *args, **kwargs)
-    
 
-class SubprojectUpdateView(PageMixin, LoginRequiredMixin, AdminPermissionRequiredMixin, generic.UpdateView):
+
+class SubprojectUpdateView(
+    PageMixin, LoginRequiredMixin, AdminPermissionRequiredMixin, generic.UpdateView
+):
     model = Subproject
-    template_name = 'subproject_create.html'
-    context_object_name = 'subproject'
-    title = _('Update Subproject')
-    active_level1 = 'subprojects'
+    template_name = "subproject_create.html"
+    context_object_name = "subproject"
+    title = _("Update Subproject")
+    active_level1 = "subprojects"
     breadcrumb = [
-        {
-            'url': reverse_lazy('subprojects:list'),
-            'title': _('subprojects')
-        },
-        {
-            'url': '',
-            'title': title
-        },
+        {"url": reverse_lazy("subprojects:list"), "title": _("subprojects")},
+        {"url": "", "title": title},
     ]
- 
-    form_class = SubprojectForm # specify the class form to be displayed
+
+    form_class = SubprojectForm  # specify the class form to be displayed
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = SubprojectForm(instance=self.get_object())
+        context["form"] = SubprojectForm(instance=self.get_object())
         return context
+
     def post(self, request, *args, **kwargs):
         form = SubprojectForm(request.POST, instance=self.get_object())
         if form.is_valid():
             subproject = form.save()
             subproject.save()
-            return redirect('subprojects:list')
+            return redirect("subprojects:list")
         return super(SubprojectCreateView, self).get(request, *args, **kwargs)
-    
-
-    
 
 
-#============================================Vulnerable Group=========================================================
+# ============================================Vulnerable Group=========================================================
+
 
 class VulnerableGroupCreateView(PageMixin, LoginRequiredMixin, generic.CreateView):
     model = VulnerableGroup
-    template_name = 'vulnerable_group_create.html'
-    context_object_name = 'vulnerable_group'
-    title = _('Create Vulnerable Group')
-    active_level1 = 'subprojects'
+    template_name = "vulnerable_group_create.html"
+    context_object_name = "vulnerable_group"
+    title = _("Create Vulnerable Group")
+    active_level1 = "subprojects"
     breadcrumb = [
-        {
-            'url': '',
-            'title': title
-        },
+        {"url": "", "title": title},
     ]
- 
-    form_class = VulnerableGroupForm # specify the class form to be displayed
+
+    form_class = VulnerableGroupForm  # specify the class form to be displayed
 
     def post(self, request, *args, **kwargs):
         form = VulnerableGroupForm(request.POST)
@@ -217,7 +209,7 @@ class VulnerableGroupCreateView(PageMixin, LoginRequiredMixin, generic.CreateVie
             vulnerable_group = form.save()
             vulnerable_group.save()
             messages.info(request, _("Successfully created"))
-            return redirect('subprojects:vulnerable_group_create')
+            return redirect("subprojects:vulnerable_group_create")
         return super(VulnerableGroupCreateView, self).get(request, *args, **kwargs)
 
 
@@ -235,27 +227,26 @@ def subprojectimage_delete(request, image_id):
                     break
 
         img.delete()
-        
+
         messages.info(request, _("Image delete successfully"))
     except Exception as exc:
         raise Http404
-    
-    return redirect('subprojects:detail', subproject.id)
 
-#============================================Download CSV=========================================================
+    return redirect("subprojects:detail", subproject.id)
+
+
+# ============================================Download CSV=========================================================
+
 
 class DownloadCSVView(PageMixin, LoginRequiredMixin, generic.TemplateView):
     """Class to download subprojects under excel file"""
 
-    template_name = 'components/download_subprojects.html'
-    context_object_name = 'Download'
+    template_name = "components/download_subprojects.html"
+    context_object_name = "Download"
     title = _("Download")
-    active_level1 = 'administrative_levels'
+    active_level1 = "administrative_levels"
     breadcrumb = [
-        {
-            'url': '',
-            'title': title
-        },
+        {"url": "", "title": title},
     ]
 
     def post(self, request, *args, **kwargs):
@@ -263,19 +254,22 @@ class DownloadCSVView(PageMixin, LoginRequiredMixin, generic.TemplateView):
         try:
             file_path = subprojects_functions.get_subprojects_under_file_excel_or_csv(
                 file_type=request.POST.get("file_type"),
-                params={"type":request.POST.get("type"), "value_of_type":request.POST.get("value_of_type"),
-                        "sector":request.POST.get("sector"), "subproject_type":request.POST.get("subproject_type")}
+                params={
+                    "type": request.POST.get("type"),
+                    "value_of_type": request.POST.get("value_of_type"),
+                    "sector": request.POST.get("sector"),
+                    "subproject_type": request.POST.get("subproject_type"),
+                },
             )
 
         except Exception as exc:
             messages.info(request, _("An error has occurred..."))
 
         if not file_path:
-            return redirect('administrativelevels:list')
+            return redirect("administrativelevels:list")
         else:
             return download_file.download(
-                request, 
+                request,
                 file_path,
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             )
-    

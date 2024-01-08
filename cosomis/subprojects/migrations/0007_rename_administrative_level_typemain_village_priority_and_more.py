@@ -4,40 +4,39 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('subprojects', '0006_villagemeeting_type'),
+        ("subprojects", "0006_villagemeeting_type"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='typemain',
-            old_name='administrative_level',
-            new_name='village_priority',
+            model_name="typemain",
+            old_name="administrative_level",
+            new_name="village_priority",
         ),
         migrations.AddField(
-            model_name='subproject',
-            name='ranking',
+            model_name="subproject",
+            name="ranking",
             field=models.IntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='villagegoal',
-            name='ranking',
+            model_name="villagegoal",
+            name="ranking",
             field=models.IntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='villagemeeting',
-            name='ranking',
+            model_name="villagemeeting",
+            name="ranking",
             field=models.IntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='villageobstacle',
-            name='ranking',
+            model_name="villageobstacle",
+            name="ranking",
             field=models.IntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='villagepriority',
-            name='ranking',
+            model_name="villagepriority",
+            name="ranking",
             field=models.IntegerField(default=0),
         ),
     ]

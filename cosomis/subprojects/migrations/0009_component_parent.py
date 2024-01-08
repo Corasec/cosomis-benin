@@ -5,15 +5,19 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('subprojects', '0008_component_remove_subproject_sub_component_and_more'),
+        ("subprojects", "0008_component_remove_subproject_sub_component_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='component',
-            name='parent',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='subprojects.component'),
+            model_name="component",
+            name="parent",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                to="subprojects.component",
+            ),
         ),
     ]
