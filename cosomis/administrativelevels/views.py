@@ -180,6 +180,13 @@ class UploadCSVView(
     ]
 
     def post(self, request, *args, **kwargs):
+        """Note that we `call convert_file_to_dict.conversion_file_xlsx_to_dict`
+        and  `convert_file_to_dict.conversion_file_csv_to_dict` without specifying the
+        `sheet` parameter which is mandatory, by default sheet="Sheet1".
+        So if the csv or xlsx file does not have a sheet named "Sheet1"
+        It will result with error. Change the file accordingly or specify the `sheet`
+        parameter when calling theses two functions
+        """
         datas = {}
         redirect_path = "administrativelevels:list"
         _type = request.POST.get("_type")
@@ -347,7 +354,9 @@ class AdministrativeLevelsListView(PageMixin, LoginRequiredMixin, ListView):
                 100,
             ).get_page(page_number)
         else:
-            return Paginator(admlvl.filter(type=_type), 100).get_page(page_number)
+            return Paginator(admlvl.filter(type=_type).order_by("name"), 100).get_page(
+                page_number
+            )
 
         # return super().get_queryset()
 

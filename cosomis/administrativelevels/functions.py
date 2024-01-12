@@ -56,6 +56,7 @@ def save_adm_lvl_csv_datas_to_db(datas_file: dict) -> str:
                         parent_type = ADMINISTRATIVE_LEVEL_TYPE.ARRONDISSEMENT
 
                     parent = None
+                    print(f"(type, parent_type) : ({_type}{parent_type})")
                     try:
                         if _type not in (
                             ADMINISTRATIVE_LEVEL_TYPE.DÉPARTEMENT,
@@ -67,9 +68,10 @@ def save_adm_lvl_csv_datas_to_db(datas_file: dict) -> str:
                                 .strip(),
                                 type=parent_type.value,
                             ).first()
+                            print(f"(parent_name) : {parent.name}")
                     except Exception as exc:
                         logger.exception(exc)
-
+                    print(f"(adm, parent) : ({name}_{_type},p_{parent_type})")
                     admlvl, created = AdministrativeLevel.objects.get_or_create(
                         name=name, type=_type, parent=parent
                     )

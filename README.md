@@ -23,8 +23,13 @@ Start Application
 - `python3 manage.py migrate`
 - `python3 manage.py runserver`
 
-## Manually loading .emv file
+## Manually loading .env file
 
 ```bash
 export $(cat .env | xargs)
 ```
+
+## Documentation
+
+Don't to read for each app the corresponding `Documentation.Md` when 
+available
