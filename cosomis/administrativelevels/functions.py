@@ -558,3 +558,168 @@ def save_csv_datas_priorities_in_db(
         message,
         file_path.replace("/", "\\\\") if platform == "win32" else file_path,
     )
+
+
+def get_cvds(facilitator):
+    administrative_levels = facilitator["administrative_levels"]
+    geographical_units = facilitator.get("geographical_units")
+
+    CVDs = []
+    if geographical_units:
+        for index in range(len(geographical_units)):
+            element = geographical_units[index]
+            for i in range(len(element["cvd_groups"])):
+                elt = element["cvd_groups"][i]
+                villages = []
+                for _index in range(len(administrative_levels)):
+                    if (
+                        elt.get("villages")
+                        and administrative_levels[_index]["id"] in elt["villages"]
+                    ):
+
+                        _in_list = False
+                        for v in villages:
+                            if administrative_levels[_index]["id"] == v["id"]:
+                                _in_list = True
+                        if not _in_list:
+                            villages.append(administrative_levels[_index])
+
+                            if administrative_levels[_index].get(
+                                "is_headquarters_village"
+                            ):
+                                elt["village"] = administrative_levels[_index]
+                                elt["village_id"] = administrative_levels[_index]["id"]
+
+                elt["villages"] = villages
+                elt["unit"] = element["name"]
+                CVDs.append(elt)
+
+    return CVDs
+
+
+def get_datas_dict(datas, key, level: int = 1, form_options_fields=False):
+    for i in range(len(datas)):
+        if form_options_fields:
+            if level == 1:
+                for elt in datas:
+                    try:
+                        return elt["options"]["fields"][key]["fields"]
+                    except:
+                        pass
+            # elif level == 2:
+            #     for elt in datas:
+            #         fields = elt['options']['fields']
+            #         for k1, v1 in fields.items():
+            #             for k2, v2 in v1['fields'].items():
+            #                 if k2 == key:
+            #                     return v2
+            return {}
+        else:
+            elt = datas[i]
+            if level == 1:
+                for k, v in elt.items():
+                    if k == key:
+                        return v
+            elif level == 2:
+                for k, v in elt.items():
+                    if v and type(v) == dict:
+                        for kk, vv in v.items():
+                            if kk == key:
+                                return vv
+
+
+def verifiy_if_element_has_a_key_who_has_a_value(liste, key, value):
+    for i in range(len(liste)):
+        elt = liste[i]
+        for k, v in elt.items():
+            if k == key and v == value:
+                return elt, i
+    return None, None
+
+
+def get_priorities_group_combine(old_liste, new_liste, group):
+    for _priority in new_liste:
+        d, i = verifiy_if_element_has_a_key_who_has_a_value(
+            old_liste, "besoinSelectionne", _priority.get("besoinSelectionne")
+        )
+        if d:
+            priority = d
+            priority["score"] += _priority["score"] if _priority.get("score") else 0
+        else:
+            priority = {
+                "besoinSelectionne": _priority.get("besoinSelectionne"),
+                "score": _priority.get("score") if _priority.get("score") else 0,
+                "rang": _priority.get("rang") if _priority.get("rang") else 0,
+            }
+        priority[group] = {
+            "score": _priority.get("score"),
+            "rang": _priority.get("rang"),
+        }
+
+        if d:
+            old_liste[i] = priority
+        else:
+            old_liste.append(priority)
+    return old_liste
+
+
+def get_administrative_level_ids_descendants(parent_id, parent_type=None, ids=[]):
+    data = []
+
+    if parent_id == "All":
+        data = AdministrativeLevel.objects.filter(type=parent_type)
+    elif parent_id == 0:
+        data = AdministrativeLevel.objects.filter(type="Region")
+    else:
+        data = AdministrativeLevel.objects.filter(parent_id=int(parent_id))
+
+    descendants_ids = [obj.id for obj in data if obj.id not in ids]
+    for descendant_id in descendants_ids:
+        get_administrative_level_ids_descendants(descendant_id, parent_type, ids)
+        ids.append(descendant_id)
+
+    return ids
+
+
+def get_administrative_level_ids_ascendants(child_id, ids=[]):
+    data = []
+    if child_id and str(child_id).isdigit():
+        child_ad_obj = list(AdministrativeLevel.objects.filter(id=int(child_id)))
+        if child_ad_obj:
+            if child_ad_obj[0].type == "Region":
+                data = []
+            else:
+                data.append(child_ad_obj[0].parent)
+
+    ascendants_ids = [obj.id for obj in data]
+    for ascendant_id in ascendants_ids:
+        get_administrative_level_ids_ascendants(ascendant_id, ids)
+        ids.append(ascendant_id)
+    return ids
+
+
+def get_administrative_level_id_ascendant(child_id, parent_type):
+    child_ad_objs = list(AdministrativeLevel.objects.filter(id=int(child_id)))
+    if child_ad_objs:
+        child_ad_obj = child_ad_objs[0]
+        if child_ad_obj.parent:
+            if child_ad_obj.parent.type == parent_type:
+                return [child_ad_obj.parent.id]
+            elif child_ad_obj.parent.parent:
+                if child_ad_obj.parent.parent.type == parent_type:
+                    return [child_ad_obj.parent.parent.id]
+                elif child_ad_obj.parent.parent.parent:
+                    if child_ad_obj.parent.parent.parent.type == parent_type:
+                        return [child_ad_obj.parent.parent.parent.id]
+                    elif child_ad_obj.parent.parent.parent.parent:
+                        if child_ad_obj.parent.parent.parent.parent.type == parent_type:
+                            return [child_ad_obj.parent.parent.parent.parent.id]
+    return []
+
+
+def get_children_types_administrativelevels(_type: str):
+    types = ["Region", "Prefecture", "Commune", "Canton", "Village"]
+    try:
+        return types[(types.index(_type) + 1) :]
+    except:
+        return types

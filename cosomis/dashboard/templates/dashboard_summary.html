@@ -1,0 +1,399 @@
+{% extends 'layouts/base.html' %}
+{% load static i18n bootstrap4 custom_tags %}
+{% block extracss %}
+    {{ block.super }}
+    <link href="{% static 'AdminLTE/plugins/chart.js/Chart.css' %}" rel="stylesheet">
+{% endblock extracss %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-12">
+            <div class="clearfix"></div>
+            <div class="row administrative-level-filter">
+                <div class="col-2">
+                    {% bootstrap_field form_adl.region show_label=False %}
+                </div>
+                <div class="col-2">
+                    {% bootstrap_field form_adl.prefecture show_label=False %}
+                </div>
+                <div class="col-2">
+                    {% bootstrap_field form_adl.commune show_label=False %}
+                </div>
+                <div class="col-2">
+                    {% bootstrap_field form_adl.canton show_label=False %}
+                </div>
+                <div class="col-2">
+                    {% bootstrap_field form_adl.village show_label=False %}
+                </div>
+                <div class="col-2">
+                    <a class="btn fs12 text-bold-family text-primary pull-right p-0" style="margin-top: 8px;"
+                        id="clear_all_filters">
+                        {% translate "Clear all filters" %}
+                    </a>
+                </div>
+            </div>
+
+
+
+
+
+            <div class="card">
+
+
+                <div class="container">
+                    <ul class="nav nav-tabs">
+                        <li style="width: 40%;" class="nav-item btn"><a style="font-size: 11px;" class="nav-link active nav-tab-toggle" data-toggle="tab" href="#summary_subprojects" >{% translate "Subprojects Dashboard" %}</a></li>
+                        <li style="width: 30%;" class="nav-item btn"><a style="font-size: 11px;" class="nav-link nav-tab-toggle" data-toggle="tab" href="#summary_financing" >{% translate "Financing Dashboard" %}</a></li>
+                        <li style="width: 30%;" class="nav-item btn"><a style="font-size: 11px;" class="nav-link nav-tab-toggle" data-toggle="tab" href="#summary_indicators" >{% translate "Indicators" %}</a></li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div id="summary_subprojects" class="tab-pane active">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div id="summary_subprojects-list">
+                                        <h3>{% translate "Subprojects Dashboard" %}</h3>
+                                    </div>
+                                </div>
+                                <div class="overlay" id="summary_subprojects-spin">
+                                    <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                                </div>
+                            </div>
+
+                        </div>
+                        
+                        <div id="summary_financing" class="tab-pane">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div id="summary_financing-list">
+                                        <h3>{% translate "Financing Dashboard" %}</h3>
+                                    </div>
+                                </div>
+                                <div class="overlay" id="summary_financing-spin">
+                                    <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-body">
+                                    <div id="summary_financing_canton-list">
+                                        <h3>{% translate "Allocations, estimates and expenditure by canton and component" %}</h3>
+                                    </div>
+                                </div>
+                                <div class="overlay" id="summary_financing_canton-spin">
+                                    <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="summary_indicators" class="tab-pane">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div id="summary_indicators-list">
+                                        <h3>{% translate "Indicators" %}</h3>
+                                        <div class="tab-pane" id="p-diagnostics">
+                                            {% include 'common/under_construction_col.html' %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="overlay" id="summary_indicators-spin">
+                                    <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+
+                    
+            </div>
+
+
+            {% comment %} <div class="card">
+                <div class="card-body table-responsive">
+                    <div id="subprojects-number-list">
+                        <h3>{% translate "Subprojects by administrative level and sector" %}</h3>
+                    </div>
+                </div>
+                <div class="overlay" id="subprojects-number-spin">
+                    <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                </div>
+            </div>
+            <br /><br />
+
+            <div class="card">
+                <div class="card-body table-responsive">
+                    <div id="subprojects-sectors-steps-number-list">
+                        <h3>{% translate "Number of sub-projects by administrative level, sector and step" %}</h3>
+                    </div>
+                </div>
+                <div class="overlay" id="subprojects-sectors-steps-number-spin">
+                    <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                </div>
+            </div>
+            <br /><br />
+
+            <div class="card">
+                <div class="card-body table-responsive">
+                    <div id="subprojects-steps-number-list">
+                        <h3>{% translate "Subprojects by step" %}</h3>
+                    </div>
+                </div>
+                <div class="overlay" id="subprojects-steps-number-spin">
+                    <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                </div>
+            </div>
+            <br /><br /> {% endcomment %}
+
+
+            {% comment %} <div class="card">
+                <div class="card-body">
+
+                </div>
+            </div> {% endcomment %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    {{ block.super }}
+    
+    <script src="{% static 'AdminLTE/plugins/chart.js/Chart.js' %}"></script>
+    <script src="{% static 'js/csrfSafeMethodAjax.js' %}"></script>
+    <script src="{% static 'js/formAjaxSubmit.js' %}"></script>
+    <script src="{% static 'js/cascade_requests.js' %}"></script>
+    <script src="{% static 'js/utils.js' %}"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            {% get_current_language as lang %}
+            let administrative_level_ids = ["id_region", "id_prefecture", "id_commune", "id_canton", "id_village"];
+            
+            let id_region = $('#id_region');
+            let id_prefecture = $('#id_prefecture');
+            let id_commune = $('#id_commune');
+            let id_canton = $('#id_canton');
+            let id_village = $('#id_village');
+            
+            let summary_subprojects_spin = $('#summary_subprojects-spin');
+            let summary_subprojects_number = $('#summary_subprojects-list');
+            
+            let summary_financing_spin = $('#summary_financing-spin');
+            let summary_financing_number = $('#summary_financing-list');
+            let summary_financing_canton_spin = $('#summary_financing_canton-spin');
+            let summary_financing_canton_number = $('#summary_financing_canton-list');
+
+            var administrative_level_id = null;
+            var administrative_level_type = null;
+            var current_nav_link = 'summary_subprojects';
+            var current_nav_links = [];
+
+
+            function loadSubprojects(administrative_level_id=null, administrative_level_type=null) {
+                summary_subprojects_spin.show();
+                $.ajax({
+                    type: "GET",
+                    url: "{% url 'dashboard:dashboard_summary_subprojects' %}",
+                    data: {
+                        administrative_level_id: administrative_level_id,
+                        administrative_level_type: administrative_level_type
+                    },
+                    success: function (response) {
+                        summary_subprojects_spin.hide();
+                        
+                        summary_subprojects_number.html(response);
+
+                        current_nav_links.push('summary_subprojects');
+                    },
+                    error: function (data) {
+                        summary_subprojects_spin.hide();
+                        alert(error_server_message + "Error " + data.status);
+                    }
+                });
+            }
+            
+            //Financing
+            function loadFinancing(administrative_level_id=null, administrative_level_type=null) {
+                summary_financing_spin.show();
+                $.ajax({
+                    type: "GET",
+                    url: "{% url 'dashboard:dashboard_summary_financing' %}",
+                    data: {
+                        administrative_level_id: administrative_level_id,
+                        administrative_level_type: administrative_level_type
+                    },
+                    success: function (response) {
+                        summary_financing_spin.hide();
+                        
+                        summary_financing_number.html(response);
+
+                        current_nav_links.push('summary_financing');
+                    },
+                    error: function (data) {
+                        summary_financing_spin.hide();
+                        alert(error_server_message + "Error " + data.status);
+                    }
+                });
+            }
+            
+            function loadFinancingCanton(administrative_level_id=null, administrative_level_type=null) {
+                summary_financing_canton_spin.show();
+                $.ajax({
+                    type: "GET",
+                    url: "{% url 'dashboard:dashboard_summary_financing_canton' %}",
+                    data: {
+                        administrative_level_id: administrative_level_id,
+                        administrative_level_type: administrative_level_type
+                    },
+                    success: function (response) {
+                        summary_financing_canton_spin.hide();
+                        
+                        summary_financing_canton_number.html(response);
+
+                        //current_nav_links.push('summary_financing_canton');
+                    },
+                    error: function (data) {
+                        summary_financing_canton_spin.hide();
+                        alert(error_server_message + "Error " + data.status);
+                    }
+                });
+            }
+            //End Financing
+
+
+            
+            function callNavLinkPage(){
+                if(!current_nav_links.includes('summary_subprojects') && current_nav_link.includes('summary_subprojects')){
+                    loadSubprojects(administrative_level_id, administrative_level_type);
+                }else if(!current_nav_links.includes('summary_financing') && current_nav_link.includes('summary_financing')){
+                    loadFinancing(administrative_level_id, administrative_level_type);
+                    loadFinancingCanton(administrative_level_id, administrative_level_type);
+                }
+            }
+            
+            callNavLinkPage();
+            
+            
+            var cascaded = false;
+            $('.administrative-level-filter select').on('change', function () {
+                if (!cascaded){
+                    cascaded = true;
+                
+                    let elt_id;
+                    for(let i=0; i<administrative_level_ids.length; i++){
+                        elt_id = administrative_level_ids[i];
+                        if($(this).attr('id') != elt_id) $(`#${elt_id}`).val([]).trigger('change.select2');
+                    }
+                    administrative_level_id = null;
+                    administrative_level_type = null;
+                    if($(this).attr('id')){// && $(this).val().length != 0){
+                        administrative_level_id = $(this).val();
+                        administrative_level_id = administrative_level_id && administrative_level_id.length != 0 ? administrative_level_id : null;
+                        administrative_level_type = administrative_level_id ? $(this).attr('id').split('_')[1] : null;
+                        current_nav_links = [];
+                        callNavLinkPage();
+                    }
+
+
+
+                    $(".administrative-level-filter select").attr('disabled', true);
+                    $.ajax({
+                        type: 'GET',
+                        url: "{% url 'administrativelevels:utils:get_choices_for_next_administrative_level_all' %}",
+                        data: {
+                            parent_id: $("#id_"+administrative_level_type).val()
+                        },
+                        success: function (data) {
+                            if(!administrative_level_type || administrative_level_type == "region" || $("#id_"+administrative_level_type).val().length == 0){
+                                set_datas_administrative_level(id_prefecture, data.prefectures);
+                                set_datas_administrative_level(id_commune, data.communes);
+                                set_datas_administrative_level(id_canton, data.cantons);
+                                set_datas_administrative_level(id_village, data.villages);
+                            }else if(administrative_level_type == "prefecture"){
+                                set_datas_administrative_level(id_commune, data.communes);
+                                set_datas_administrative_level(id_canton, data.cantons);
+                                set_datas_administrative_level(id_village, data.villages);
+                            }else if(administrative_level_type == "commune"){
+                                set_datas_administrative_level(id_canton, data.cantons);
+                                set_datas_administrative_level(id_village, data.villages);
+                            }else if(administrative_level_type == "canton"){
+                                set_datas_administrative_level(id_village, data.villages);
+                            }
+                            cascaded = false;
+                        },
+                        error: function (data) {
+                            alert(error_server_message + "Error " + data.status);
+                            $(".administrative-level-filter select").attr('disabled', false);
+                            cascaded = false;
+                        }
+                    }).done(function () {
+                            $(".administrative-level-filter select").attr('disabled', false);
+                            cascaded = false;
+                        }
+                    );
+                }
+
+
+            });
+
+
+
+            $("#clear_all_filters").on("click", function () {
+                $('.administrative-level-filter input').val('');
+                $('.administrative-level-filter select').val(null).trigger('change.select2');
+                administrative_level_id = null;
+                administrative_level_type = null;
+                current_nav_links = [];
+                callNavLinkPage();
+            });
+
+            $('.nav-tab-toggle').on('click', function () {
+                current_nav_link = this.href;
+                callNavLinkPage();
+            });
+
+
+        });
+    </script>
+
+{% endblock %}
+
+
+
+{% block modals %}
+    <div id="detailsModalObjects" class="modal" role="dialog" aria-hidden="true" data-backdrop="static"></div>
+{% endblock %}
+
+{% block select2 %}
+    <script type="text/javascript">
+        $("#id_region").select2({
+            placeholder: "{% translate 'Region' %}",
+            allowClear: true
+        });
+        $("#id_prefecture").select2({
+            placeholder: "{% translate 'Prefecture' %}",
+            allowClear: true,
+        });
+        $("#id_commune").select2({
+            placeholder: "{% translate 'Commune' %}",
+            allowClear: true,
+        });
+         $("#id_canton").select2({
+            placeholder: "{% translate 'Canton' %}",
+            allowClear: true,
+        });
+         $("#id_village").select2({
+            placeholder: "{% translate 'Village' %}",
+            allowClear: true,
+        });
+
+        $('b[role="presentation"]').hide();
+        $('.select2-selection__arrow').append(
+            '<i class="fas fa-chevron-circle-down text-primary" style="margin-top:12px;"></i>');
+
+    </script>
+{% endblock select2 %}

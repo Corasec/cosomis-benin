@@ -16,8 +16,8 @@
             </div>
             <div class="float-right">
                 <span href="#" class="font-weight-bold" style="background-color: #ffac67; color: white; padding: 7px; border-radius: 5px;">
-                    {% if object.current_level_of_physical_realization_of_the_work %}
-                        {{ object.current_level_of_physical_realization_of_the_work }}
+                    {% if object.get_current_subproject_step_and_level %}
+                        {{ object.get_current_subproject_step_and_level }}
                     {% else %}
                         {% translate 'No start' %}
                     {% endif %}
@@ -30,81 +30,407 @@
 
 <div class="row">
     <div class="col-9">
-        <div class="card">
-            <div class="card-body">
 
-                <div class="clearfix">
-                    <div class="float-left">
-                        <h5 class="font-weight-bold text-sm">{% translate 'Subproject Description' %}</h5>
-                    </div>
-                    <div class="float-right">
-                        <a href="#" class="font-weight-bold">{% translate 'Update' %}</a>
-                    </div>
-                </div>
+        <div class="row">
 
-                <div class="clearfix pb-1" >
-                    <span class="font-weight-bold">{% translate 'Location' %}: </span>
-                    {% if object.location_subproject_realized %}
-                        <a style="color: #599cf7 !important;" target="_blank" 
-                            href="{% url 'administrativelevels:village_detail' object.location_subproject_realized.pk %}" >
-                            {{ object.get_location }}
-                        </a>
-                    {% else %}
-                        <span style="color: #599cf7 !important;">
-                            {{ object.get_location_commune }}, 
-                            <a style="color: #599cf7 !important;" target="_blank" 
-                                href="{% url 'administrativelevels:detail' object.canton.pk %}" >
-                                {{ object.canton.name }}
-                            </a>
-                            {% for sp in object.subproject_set.get_queryset %}
-                                / <a style="color: #599cf7 !important;" target="_blank" 
-                                    href="{% url 'administrativelevels:detail' sp.canton.pk %}" >
-                                    {{ sp.canton.name }}
-                                </a>
-                            {% endfor %}
-                        </span>
-                    {% endif %}
-                </div>
+            <div class="col-{% if object.has_subprojects_linked %}7{% else %}12{% endif %}">
+                <div class="card" {% if object.infrastructure_deleted %}style="background-color: red;"{% endif %}>
+                    <div class="card-body">
 
-                {% if object.location_subproject_realized %}
-                <div class="clearfix pb-1">
-                    <span class="font-weight-bold">{% translate 'CVD' %}: </span>
-                    <span>
-                        {{ object.cvd.name }} (
-                            {% for vg in object.cvd.get_villages %}
-                                <a style="color: #599cf7 !important;" target="_blank" 
-                                    href="{% url 'administrativelevels:village_detail' vg.pk %}" >
-                                    {{ vg.name }}
-                                </a>
-                                {% if not forloop.last %}
-                                    / 
+                        <div class="clearfix">
+                            <div class="float-left">
+                                <h5 class="font-weight-bold text-sm">{% translate 'Subproject Description' %}</h5>
+                            </div>
+                            <div class="float-right">
+                                {% if user.is_superuser or user|has_group:"Admin" or user|has_group:"Evaluator" or user|has_group:"Infra" %}
+                                    <a href="{% url 'subprojects:update' object.pk %}" class="float-right font-weight-bold">{% translate 'Update' %}</a>
+                                    {% if user.is_superuser or user|has_group:"Admin" or user|has_group:"Evaluator" %}
+                                    {% if not object.has_subprojects_linked and not object.link_to_subproject %}
+                                    <br />
+                                    <a href="{% url 'subprojects:create_infra_or_link_subproject' object.pk %}" class="font-weight-bold" style="font-size: 10px !important;">{% translate 'Add an infrastructure or a subproject linking to this sub-project' %}</a>
+                                    {% endif %}
+                                    {% endif %}
                                 {% endif %}
-                            {% endfor %}
-                        )
-                    </span>
-                </div>
-                {% endif %}
+                                {% if object.link_to_subproject %}
+                                <br />
+                                <a href="{% url 'subprojects:detail' object.link_to_subproject.pk %}" class="float-right font-weight-bold">{% translate 'View subproject details' %}</a>
+                                {% endif %}
+                            </div>
+                        </div>
 
-                <div class="clearfix pb-1">
-                    <span class="font-weight-bold">{% translate 'Sector' %}: </span><span>{{ object.subproject_sector }}</span>
-                </div>
+                        <div class="clearfix pb-1" >
+                            <span class="font-weight-bold">{% translate 'Location' %}: </span>
+                            {% if object.location_subproject_realized %}
+                                <a style="color: #599cf7 !important;" target="_blank" 
+                                    href="{% url 'administrativelevels:village_detail' object.location_subproject_realized.pk %}" >
+                                    {{ object.get_location }}
+                                </a>
+                            {% else %}
+                                <span style="color: #599cf7 !important;">
+                                    {{ object.get_location_commune }}, 
+                                    <a style="color: #599cf7 !important;" target="_blank" 
+                                        href="{% url 'administrativelevels:detail' object.canton.pk %}" >
+                                        {{ object.canton.name }}
+                                    </a>
+                                    {% for sp in object.get_all_subprojects_linked %}
+                                        / <a style="color: #599cf7 !important;" target="_blank" 
+                                            href="{% url 'administrativelevels:detail' sp.canton.pk %}" >
+                                            {{ sp.canton.name }}
+                                        </a>
+                                    {% endfor %}
+                                </span>
+                            {% endif %}
+                        </div>
 
-                <div class="clearfix pb-1">
-                    <span class="font-weight-bold">{% translate 'Type' %}: </span><span>{{ object.type_of_subproject }}</span>
-                </div>
+                        {% if object.location_subproject_realized %}
+                        <div class="clearfix pb-1">
+                            <span class="font-weight-bold">{% translate 'CVD' %}: </span>
+                            <span>
+                                {{ object.cvd.name }} (
+                                    {% for vg in object.cvd.get_villages %}
+                                        <a style="color: #599cf7 !important;" target="_blank" 
+                                            href="{% url 'administrativelevels:village_detail' vg.pk %}" >
+                                            {{ vg.name }}
+                                        </a>
+                                        {% if not forloop.last %}
+                                            / 
+                                        {% endif %}
+                                    {% endfor %}
+                                )
+                            </span>
+                        </div>
+                        {% endif %}
 
-                <div class="clearfix pb-1">
-                    <span class="font-weight-bold">{% translate 'Description' %}: </span><span>{{ object.full_title_of_approved_subproject }}</span>
-                </div>
+                        <div class="clearfix pb-1">
+                            <span class="font-weight-bold">{% translate 'Sector' %}: </span><span>{{ object.subproject_sector }}</span>
+                        </div>
 
-                {% if drilling_flow_rate %}
-                <div class="clearfix pb-1">
-                    <span class="font-weight-bold">{% translate 'Boring Flow' %} (m3): </span><span>{{ object.drilling_flow_rate }}</span>
-                </div>
-                {% endif %}
+                        <div class="clearfix pb-1">
+                            <span class="font-weight-bold">{% translate 'Type' %}: </span><span>{{ object.type_of_subproject }} | {{ object.subproject_type_designation }}</span>
+                        </div>
 
+                        <div class="clearfix pb-1">
+                            <span class="font-weight-bold">{% translate 'Description' %}: </span><span>{{ object.full_title_of_approved_subproject }}</span>
+                        </div>
+
+                        <div class="clearfix pb-1">
+                            <span class="font-weight-bold">{% translate 'Estimated cost' %}: </span><span>{{ object.get_estimated_cost_str }}</span>
+                        </div>
+
+                        {% if drilling_flow_rate %}
+                        <div class="clearfix pb-1">
+                            <span class="font-weight-bold">{% translate 'Boring Flow' %} (m3): </span><span>{{ object.drilling_flow_rate }}</span>
+                        </div>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+
+
+            
+            {% if object.has_subprojects_linked %}
+            <div class="col-5">
+                <div class="card">
+                    <div class="card-body">
+
+                        <div class="clearfix">
+                                {% if user.is_superuser or user|has_group:"Admin" or user|has_group:"Evaluator" %}
+                                <a href="{% url 'subprojects:create_infra_or_link_subproject' object.pk %}" class="font-weight-bold" style="font-size: 10px !important;">{% translate 'Add an infrastructure or a subproject linking to this sub-project' %}</a>
+                                <br /><br />
+                                {% endif %}
+
+                                <div>
+                                    <div>
+                                        {% if object.get_infrastructures_linked|length > 1 %}
+                                            {% translate 'Infrastructures' %} : 
+                                            <br />
+                                        {% elif object.get_infrastructures_linked|length == 1 %}
+                                            {% translate 'Infrastructure' %} : 
+                                        {% endif %}
+                                        {% for sub_sub in object.get_infrastructures_linked %}
+                                            <a href="{% url 'subprojects:update' sub_sub.pk %}" class="font-weight-bold" style="font-size: 9px !important;">{{ forloop.counter }}-/ N{{ sub_sub.number }}.{{ sub_sub.joint_subproject_number }} {{ sub_sub.type_of_subproject }}</a>
+                                              &nbsp; 
+                                            {% if user.is_superuser or user|has_group:"Admin" or user|has_group:"Evaluator" or user|has_group:"Infra" %}
+                                            <a href="{% url 'subprojects:update' sub_sub.pk %}" style="font-size: 9px !important;"
+                                                 title="{% translate 'Edit' %}">
+                                                <i class="fa fa-edit"></i>
+                                            </a> &nbsp; 
+                                            {% endif %}
+                                            <a href="{% url 'subprojects:detail' sub_sub.pk %}" style="font-size: 9px !important;"
+                                                title="{% translate 'View details' %}" target="_blank">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                            <br />
+                                        {% endfor %}
+                                    </div>
+                                    <div>
+                                        {% if object.get_subprojects_linked|length > 1 %}
+                                            {% translate 'Subprojects' %} : 
+                                            <br />
+                                        {% elif object.get_subprojects_linked|length == 1 %}
+                                            {% translate 'Subproject' %} : 
+                                        {% endif %}
+                                        {% for sub_sub in object.get_subprojects_linked %}
+                                            <a href="{% url 'subprojects:update' sub_sub.pk %}" class="font-weight-bold" style="font-size: 9px !important;">{{ forloop.counter }}-/ N{{ sub_sub.number }}.{{ sub_sub.joint_subproject_number }} {{ sub_sub.type_of_subproject }}</a>
+                                             &nbsp; 
+                                            {% if user.is_superuser or user|has_group:"Admin" or user|has_group:"Evaluator" or user|has_group:"Infra" %}
+                                            <a href="{% url 'subprojects:update' sub_sub.pk %}" style="font-size: 9px !important;"
+                                                 title="{% translate 'Edit' %}">
+                                                <i class="fa fa-edit"></i>
+                                            </a> &nbsp; 
+                                            {% endif %}
+                                            <a href="{% url 'subprojects:detail' sub_sub.pk %}" style="font-size: 9px !important;"
+                                                title="{% translate 'View details' %}" target="_blank">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                            <br />
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+
+            
+
+        </div>
+
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card" >
+                    <div class="card-header">
+                        <div class="clearfix">
+                            <div class="float-left">
+                                <h5 class="font-weight-bold">{% translate 'Sub-project tracking graph' %}</h5>
+                            </div>
+                            <div class="float-right">
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="subproject_step_graph"></div>
+                    </div>
+                    <div class="overlay" id="load-subproject-step-graph-spin">
+                        <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                    </div>
+                </div>
             </div>
         </div>
+
+
+
+
+
+
+        
+
+
+
+        <div class="row">
+
+            <div class="col-8">
+                <div class="card">
+                    <div class="card-body">
+
+                        <div class="clearfix pb-1">
+                            <span class="font-weight-bold">{% translate 'Contract no. for work companies (ET)' %}: </span>
+                            <span>{% if object.contract_number_of_work_companies %}{{ object.contract_number_of_work_companies }}{% else %}-{% endif %}</span>
+                        </div>
+
+                        <div class="clearfix pb-1">
+                            <span class="font-weight-bold">{% translate 'Name of company awarded work contract (ET)' %}: </span>
+                            <span>{% if object.name_of_the_awarded_company_works_companies %}{{ object.name_of_the_awarded_company_works_companies }}{% else %}-{% endif %}</span>
+                        </div>
+
+                        <div class="clearfix pb-1">
+                            <span class="font-weight-bold">{% translate 'Date contract signed by works companies (ET)' %}: </span>
+                            <span>{% if object.date_signature_contract_work_companies %}{{ object.date_signature_contract_work_companies }}{% else %}-{% endif %}</span>
+                        </div>
+
+                        <div class="clearfix pb-1">
+                            <span class="font-weight-bold">{% translate 'Contract amount for works companies (ET)' %}: </span>
+                            <span>{% if object.contract_amount_work_companies %}{{ object.contract_amount_work_companies|separate_with_space:"FCFA" }}{% else %}-{% endif %}</span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="col-4">
+                <div class="card" >
+                    {% comment %} <div class="card-header">
+                        <div class="clearfix">
+                            <div class="float-left">
+                                <h5 class="font-weight-bold">{% translate 'Facilitator' %}</h5>
+                            </div>
+                            <div class="float-right">
+                                
+                            </div>
+                        </div>
+                    </div> {% endcomment %}
+                    <div class="card-body">
+                        <div class="clearfix">
+                            <div class="float-left">
+                                <h5 class="font-weight-bold text-sm">{% translate 'Facilitator' %}</h5>
+                            </div>
+                        </div>
+                        <div class="clearfix">
+                            <a href="#" class="font-weight-bold">
+                                {% if object.get_facilitator_name %}
+                                    {{ object.get_facilitator_name }}
+                                {% else %}
+                                    {% translate 'Name not defined' %}
+                                {% endif %}
+                            </a>
+                        </div>
+
+                        {% if object.wave %}
+                        <div class="clearfix pb-1">
+                            <span class="font-weight-bold">{% translate 'Wave' %}: </span><span>{{ object.wave }}</span>
+                        </div>
+                        {% endif %}
+
+                        {% if object.lot %}
+                        <div class="clearfix pb-1">
+                            <span class="font-weight-bold">{% translate 'Lot' %}: </span><span>{{ object.lot }}</span>
+                        </div>
+                        {% endif %}
+
+                    </div>
+
+                        
+                </div>
+            </div>
+            {% comment %} <div class="col-4">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="clearfix">
+                            <div class="float-left">
+                                <h5 class="font-weight-bold">{% translate 'Financial' %}</h5>
+                            </div>
+                            <div class="float-right">
+                                <a href="#" class="font-weight-bold">{% translate 'Add Movement' %} <i
+                                        class="fas fa-plus"></i></a>
+                            </div>
+                        </div>
+                        <div class="card bg-light" style="height: 30px;">
+                            <div class="card-body">
+                                <div class="font-weight-bold">
+                                    <div class="clearfix">
+                                        <div class="float-left">
+                                            <h5 class="font-weight-bold">{% translate 'Remaining' %} </h5>
+                                        </div>
+                                        <div class="float-right"><a href="#" class="font-weight-bold text-primary">6000 USD</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+
+                        <div class="clearfix">
+                            <div class="float-left">
+                                <h6 class="font-weight-bold text-danger">- 550 USD</h6>
+                            </div>
+                            <div class="float-right">
+                                <span href="#">{% translate 'Lorem ipsum' %} </span>
+                            </div>
+                        </div>
+                        <hr>
+
+                    </div>
+                    <div class="card-footer d-flex justify-content-center">
+                        <h6><a href="#" class="font-weight-bold text-primary">{% translate 'View All Movements' %}</a></h6>
+                    </div>
+                </div>
+            </div> {% endcomment %}
+            {% comment %} <div class="col-4">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="clearfix">
+                            <div class="float-left">
+                                <h5 class="font-weight-bold">{% translate 'Timeline' %}</h5>
+                            </div>
+                            <div class="float-right">
+                                <a href="#" class="font-weight-bold">{% translate 'Update' %}</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+
+                        
+
+                    </div>
+                    <div class="card-footer d-flex justify-content-center">
+                        
+                    </div>
+                </div>
+            </div> {% endcomment %}
+        </div>
+
+
+        <div class="row">
+
+            <div class="col-8">
+                <div class="card">
+                    <div class="card-body">
+
+                        <div class="clearfix pb-1">
+                            <span class="font-weight-bold">{% translate 'Approval date cora' %}: </span>
+                            <span>{% if object.approval_date_cora %}{{ object.approval_date_cora }}{% else %}-{% endif %}</span>
+                        </div>
+
+                        <div class="clearfix pb-1">
+                            <span class="font-weight-bold">{% translate 'Date of start of work in the village (date of notification of service order)' %}: </span>
+                            <span>{% if object.launch_date_of_the_construction_site_in_the_village %}{{ object.launch_date_of_the_construction_site_in_the_village }}{% else %}-{% endif %}</span>
+                        </div>
+
+                        <div class="clearfix pb-1">
+                            <span class="font-weight-bold">{% translate 'Estimated completion time (months)' %}: </span>
+                            <span>{% if object.expected_duration_of_the_work %}{{ object.expected_duration_of_the_work|remove_zeros_on_zeros }}{% else %}-{% endif %}</span>
+                        </div>
+
+                        <div class="clearfix pb-1">
+                            <span class="font-weight-bold">{% translate 'Expected contract end date' %}: </span>
+                            <span>{% if object.expected_end_date_of_the_contract %}{{ object.expected_end_date_of_the_contract }}{% else %}-{% endif %}</span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if object.comments %}
+        <div class="row">
+
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <div class="clearfix pb-1">
+                            <span class="font-weight-bold">{% translate 'Comments' %}: </span>
+                            <span>{{ object.comments }}</span>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+
+
+
+
     </div>
     <div class="col-3">
         <div class="card">
@@ -160,125 +486,100 @@
             </div>
 
         </div>
-    </div>
-</div>
 
 
 
 
-
-
-
-
-
-<div class="row">
-    <div class="col-4">
-        <div class="card" >
-            <div class="card-header">
-                <div class="clearfix">
-                    <div class="float-left">
-                        <h5 class="font-weight-bold">{% translate 'Facilitator' %}</h5>
-                    </div>
-                    <div class="float-right">
-                        
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                
-                 <div class="clearfix">
-                    <a href="#" class="font-weight-bold">
-                        {% if object.facilitator_name %}
-                            {{ object.facilitator_name }}
-                        {% else %}
-                            {% translate 'Name not defined' %}
-                        {% endif %}
-                    </a>
-                </div>
-
-                {% if object.wave %}
-                <div class="clearfix pb-1">
-                    <span class="font-weight-bold">{% translate 'Wave' %}: </span><span>{{ object.wave }}</span>
-                </div>
-                {% endif %}
-
-                {% if object.lot %}
-                <div class="clearfix pb-1">
-                    <span class="font-weight-bold">{% translate 'Lot' %}: </span><span>{{ object.lot }}</span>
-                </div>
-                {% endif %}
-
-            </div>
-
-                 
-        </div>
-    </div>
-    <div class="col-4">
-       <div class="card">
-            <div class="card-header">
-                <div class="clearfix">
-                    <div class="float-left">
-                        <h5 class="font-weight-bold">{% translate 'Financial' %}</h5>
-                    </div>
-                    <div class="float-right">
-                        <a href="#" class="font-weight-bold">{% translate 'Add Movement' %} <i
-                                class="fas fa-plus"></i></a>
-                    </div>
-                </div>
-                <div class="card bg-light" style="height: 30px;">
-                    <div class="card-body">
-                        <div class="font-weight-bold">
-                             <div class="clearfix">
-                                <div class="float-left">
-                                    <h5 class="font-weight-bold">{% translate 'Remaining' %} </h5>
-                                </div>
-                                <div class="float-right"><a href="#" class="font-weight-bold text-primary">6000 USD</a></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-
-                 <div class="clearfix">
-                    <div class="float-left">
-                        <h6 class="font-weight-bold text-danger">- 550 USD</h6>
-                    </div>
-                    <div class="float-right">
-                        <span href="#">{% translate 'Lorem ipsum' %} </span>
-                    </div>
-                </div>
-                <hr>
-
-            </div>
-            <div class="card-footer d-flex justify-content-center">
-                <h6><a href="#" class="font-weight-bold text-primary">{% translate 'View All Movements' %}</a></h6>
-            </div>
-        </div>
-    </div>
-    <div class="col-4">
         <div class="card">
             <div class="card-header">
                 <div class="clearfix">
                     <div class="float-left">
-                        <h5 class="font-weight-bold">{% translate 'Timeline' %}</h5>
-                    </div>
-                    <div class="float-right">
-                        <a href="#" class="font-weight-bold">{% translate 'Update' %}</a>
+                        <h5 class="font-weight-bold">{% translate 'Sub-project history' %}</h5>
                     </div>
                 </div>
             </div>
             <div class="card-body">
-
-                 
-
+                <div id="subproject_step_add"></div>
             </div>
-            <div class="card-footer d-flex justify-content-center">
-                
+            <div class="card-footer d-flex justify-content-center"></div>
+            <div class="overlay" id="load-subproject-step-add-spin">
+                <i class="fas fa-2x fa-sync-alt fa-spin"></i>
             </div>
         </div>
+
+
+
+
+        <div class="card">
+            <div class="card-body">
+                {% comment %} {% if object.get_all_projects or object.get_all_financiers %}
+                <div class="clearfix pb-1">
+                    <span class="font-weight-bold">{% translate 'Financed by' %}: </span>
+                    <span>
+                        {% for project in object.get_all_projects %}
+                            {{ project.name }}
+                            {% if project.financier %}({{ project.financier }}){% endif %}
+                        {% endfor %}
+                        {% if object.get_all_projects and object.get_all_financiers %} ; {% endif %}
+                        {% for financier in object.get_all_financiers %}
+                            {{ financier.name }}
+                        {% endfor %}
+                    </span>
+                </div>
+                {% endif %} {% endcomment %}
+                {% if object.get_all_projects or object.get_all_financiers %}
+                <div class="clearfix pb-1">
+                    <span class="font-weight-bold">{% translate 'Financed by' %}: </span>
+                    <span>
+                        {% if object.get_all_projects %}
+                            {% for project in object.get_all_projects %}
+                                {% if project.financier %}{{ project.financier }}{% endif %}
+                            {% endfor %}
+                        {% else %}
+                            {% for financier in object.get_all_financiers %}
+                                {{ financier.name }}
+                            {% endfor %}
+                        {% endif %}
+                    </span>
+                </div>
+                {% endif %}
+
+                {% if object.get_all_projects %}
+                <div class="clearfix pb-1">
+                    <span class="font-weight-bold">{% translate 'Project' %}: </span>
+                    <span>
+                        {% for project in object.get_all_projects %}
+                            {{ project.name }}
+                            {% if project.financier %}({{ project.financier }}){% endif %}
+                        {% endfor %}
+                    </span>
+                </div>
+                {% endif %}
+
+                {% comment %} <div class="clearfix pb-1">
+                    <span class="font-weight-bold">{% translate 'Name of company awarded work contract (ET)' %}: </span>
+                    <span>{% if object.name_of_the_awarded_company_works_companies %}{{ object.name_of_the_awarded_company_works_companies }}{% else %}-{% endif %}</span>
+                </div>
+
+                <div class="clearfix pb-1">
+                    <span class="font-weight-bold">{% translate 'Date contract signed by works companies (ET)' %}: </span>
+                    <span>{% if object.date_signature_contract_work_companies %}{{ object.date_signature_contract_work_companies }}{% else %}-{% endif %}</span>
+                </div> {% endcomment %}
+
+                {% comment %} <div class="clearfix pb-1">
+                    <span class="font-weight-bold">{% translate 'Estimated cost' %}: </span><span>{{ object.get_estimated_cost_str }}</span>
+                </div> {% endcomment %}
+
+            </div>
+        </div>
+
+
+
     </div>
 </div>
+
+
+
 
 
 
@@ -420,7 +721,8 @@
                                                     
                                         
                                         <a target="_blank" href="{{ img.url|imgAWSS3Filter }}">
-                                            <img class="d-block w-100" src="{{ img.url|imgAWSS3Filter }}" alt="{{ img.name }}">
+                                            <img class="d-block w-100" src="{{ img.url|imgAWSS3Filter }}" alt="{{ img.name }}" 
+                                                style="width: 500px !important; margin: auto !important;">
                                         </a>
                                         <div class="carousel-caption d-none d-md-block">
                                             <div style="margin-top: -370px !important;">
@@ -434,33 +736,33 @@
 
                                             <div style="width: 70% !important; margin: auto !important; margin-top: 15px !important;">
                                                 <input type="hidden" name="object_id_update" value="{{ object.id }}" id="object_id_update" />
-                                                <input type="hidden" name="image_id" value="{{ img.id }}" id="image_id" />
+                                                <input type="hidden" name="image_id-{{ img.id }}" value="{{ img.id }}" id="image_id-{{ img.id }}" />
 
-                                                <div class="form-group" id="name_content">
-                                                    <label for="name_update">{% translate 'Name' %}</label>
-                                                    <input type="text" name="name_update" id="name_update" class="form-control" value="{{ img.name }}" required />
+                                                <div class="form-group" id="name_content-{{ img.id }}">
+                                                    <label for="name_update-{{ img.id }}">{% translate 'Name' %}</label>
+                                                    <input type="text" name="name_update-{{ img.id }}" id="name_update-{{ img.id }}" class="form-control" value="{{ img.name }}" required />
                                                 </div>
 
-                                                <div class="form-group" id="order_content">
-                                                    <label for="order_update">{% translate 'Order' %}</label>
-                                                    <input type="number" name="order_update" id="order_update" class="form-control" value="{{ img.order }}" required />
+                                                <div class="form-group" id="order_content-{{ img.id }}">
+                                                    <label for="order_update-{{ img.id }}">{% translate 'Order' %}</label>
+                                                    <input type="number" name="order_update-{{ img.id }}" id="order_update-{{ img.id }}" class="form-control" value="{{ img.order }}" required />
                                                 </div>
 
-                                                <div class="form-group" id="date_taken_content">
-                                                    <label for="date_taken_update">{% translate 'Date taken' %} ({{ img.date_taken }})</label>
-                                                    <input type="date" name="date_taken_update" id="date_taken_update" class="form-control" value="{{ img.date_taken }}" required />
+                                                <div class="form-group" id="date_taken_content-{{ img.id }}">
+                                                    <label for="date_taken_update-{{ img.id }}">{% translate 'Date taken' %} ({{ img.date_taken }})</label>
+                                                    <input type="date" name="date_taken_update-{{ img.id }}" id="date_taken_update-{{ img.id }}" class="form-control" value="{{ img.date_taken }}" required />
                                                 </div>
 
-                                                <div class="form-check" id="principal_content" style="margin-bottom: 30px !important; margin-left: 30px !important;">
-                                                    <input type="checkbox" name="principal_update" id="principal_update" class="form-check-input" {% if img.principal %}checked{% endif %}  />
-                                                    <label class="form-check-label" for="principal_update">{% translate 'Principal Image' %}</label>
+                                                <div class="form-check" id="principal_content-{{ img.id }}" style="margin-bottom: 30px !important; margin-left: 30px !important;">
+                                                    <input type="checkbox" name="principal_update-{{ img.id }}" id="principal_update-{{ img.id }}" class="form-check-input" {% if img.principal %}checked{% endif %}  />
+                                                    <label class="form-check-label" for="principal_update-{{ img.id }}">{% translate 'Principal Image' %}</label>
                                                 </div>
-                                                    
+                                                
                                                 <p>
-                                                    <button type="submit" class="btn btn-primary float-left" id="submit_btn_image_update">
+                                                    <button type="submit" class="btn btn-primary float-left submit_btn_image_update" id="submit_btn_image_update-{{ img.id }}">
                                                         {% translate 'Submit' %}
                                                     </button>
-                                                    <a type="submit" class="btn btn-danger float-right" href="{% url 'subprojects:subproject_image_delete' img.id %}" >
+                                                    <a type="submit" class="btn btn-danger float-right" href="{% url 'subprojects:subproject_file_delete' img.id %}" >
                                                         {% translate 'Delete' %}
                                                     </a>
                                                     <div style="clear; both;"></div>
@@ -477,11 +779,13 @@
 
 
                             </div>
-                            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev" 
+                                style="color: white !important; background-color: black !important;">
                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                 <span class="sr-only">Previous</span>
                             </a>
-                            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next" 
+                                style="color: white !important; background-color: black !important;">
                                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                                 <span class="sr-only">Next</span>
                             </a>
@@ -506,7 +810,9 @@
 
 {% endblock %}
 
-
+{% block modals %}
+    <div id="statusChangeModalForm" class="modal" role="dialog" aria-hidden="true" data-backdrop="static"></div>
+{% endblock %}
 
 
 {% block javascript %}
@@ -516,32 +822,39 @@
 <script src="{% static 'plugins/datepicker/datepicker.js' %}"></script>
 <script src="{% static 'plugins/datepicker/datepicker.en.js' %}"></script>
 <script src="{% static 'plugins/datepicker/datepicker.custom.js' %}"></script>
+<script src="{% static 'js/csrfSafeMethodAjax.js' %}"></script>
+<script src="{% static 'js/formAjaxSubmit.js' %}"></script>
 
 <script type="text/javascript">
     $(document).ready(function () {
+            let status_change_modal = $('#statusChangeModalForm');
+            let load_subproject_step_add_spin = $('#load-subproject-step-add-spin');
+            let load_subproject_step_graph_spin = $('#load-subproject-step-graph-spin');
             
-            $(document).on("click", "#submit_btn_image_update", function (event) {
+            $(document).on("click", ".submit_btn_image_update", function (event) {
+                var id_list = this.id.split('-');
+                var img_id = id_list[id_list.length-1];
                 event.preventDefault();
                 const object_id = $('#object_id_update').val();
-                const date_taken = $('#date_taken_update').val();
-                const order = $('#order_update').val();
-                const name = $('#name_update').val();
+                const date_taken = $('#date_taken_update-'+img_id).val();
+                const order = $('#order_update-'+img_id).val();
+                const name = $('#name_update-'+img_id).val();
                 if(order && order == 0){
                     alert(`{% translate "The order field must have a value greater than 0" %}`);
-                    $("#submit_btn_image_update").attr('disabled', false);
+                    $("#submit_btn_image_update-"+img_id).attr('disabled', false);
                 }else if(object_id && order && name){
                     $(this).attr('disabled', true);
 
                     {% comment %} try{ {% endcomment %}
                         var data =  new FormData();
-                        data.append("image_id", $('#image_id').val());
+                        data.append("image_id", $('#image_id-'+img_id).val());
                         data.append("csrfmiddlewaretoken", "{{ csrf_token }}");
                         data.append("object_id", $('#object_id_update').val());
-                        data.append("date_taken", $('#date_taken_update').val());
-                        data.append("order", $('#order_update').val());
-                        data.append("name", $('#name_update').val());
+                        data.append("date_taken", $('#date_taken_update-'+img_id).val());
+                        data.append("order", $('#order_update-'+img_id).val());
+                        data.append("name", $('#name_update-'+img_id).val());
 
-                        var principal = document.getElementById("principal_update");
+                        var principal = document.getElementById("principal_update-"+img_id);
                         if (principal.checked == true){
                             principal_value = 1;
                         } else {
@@ -565,25 +878,25 @@
                                     $(".messageModalImage").modal("hide");
                                     $("#messageModalImage").text("");
                                 }, 4000);
-                                $("#submit_btn_image_update").attr('disabled', false);
+                                $("#submit_btn_image_update-"+img_id).attr('disabled', false);
                             }
 
                         }).catch(
                             error => {
                                 console.log(error);
                                 alert(error);
-                                $("#submit_btn_image_update").attr('disabled', false);
+                                $("#submit_btn_image_update-"+img_id).attr('disabled', false);
                             }
                         );
                     {% comment %} }catch(e){
                         alert(`{% translate "Please fill in all fields" %}`);
-                        $("#submit_btn_image_update").attr('disabled', false);
+                        $("#submit_btn_image_update-"+img_id).attr('disabled', false);
                     } {% endcomment %}
                     
 
                 }else{
                     alert(`{% translate "Please fill in all fields" %}`);
-                    $("#submit_btn_image_update").attr('disabled', false);
+                    $("#submit_btn_image_update-"+img_id).attr('disabled', false);
                 }
                 
 
@@ -591,7 +904,103 @@
 
 
 
-            
+            //Subproject Tracking add
+            class AddStepFormAjaxSubmit extends FormAjaxSubmit {
+                submitted_form() {
+                    loadSubprojectStep();
+                }
+            }
+            let add_subproject_tracking_step_form_ajax = new AddStepFormAjaxSubmit();
+
+            class AddLevelFormAjaxSubmit extends FormAjaxSubmit {
+                submitted_form() {
+                    loadSubprojectStep();
+                }
+            }
+            let add_subproject_tracking_level_form_ajax = new AddLevelFormAjaxSubmit();
+
+            class DelteSubprojectStepFormAjaxSubmit extends FormAjaxSubmit {
+                submitted_form() {
+                    loadSubprojectStep();
+                }
+            }
+            let delete_subproject_tracking_step_form_ajax = new DelteSubprojectStepFormAjaxSubmit();
+
+            class DisplaySubprojectStepFilesAjaxSubmit extends FormAjaxSubmit {
+                
+            }
+            let display_subproject_tracking_step_files_ajax = new DisplaySubprojectStepFilesAjaxSubmit();
+
+            function loadSubprojectStep(){
+                load_subproject_step_graph_spin.show();
+                load_subproject_step_add_spin.show();
+                $('#subproject_step_add').load("{% url 'subprojects:step:subproject_step_add_template' object.id %}", function (
+                    response, status, xhr) {
+                    if (status === "error") {
+                        alert(error_server_message + "Error " + response.status);
+                    }
+                    //Add subproject step
+                    let add_subproject_tracking_step = $("#add_subproject_tracking_step");
+                    let comment_thread_a = $(".comment-thread a");
+                    add_subproject_tracking_step.on('click', function () {
+                        let url = "{% url 'subprojects:step:subproject_step_add_form' object.id %}";
+                        add_subproject_tracking_step_form_ajax.load_form('#subproject_add_step_form', status_change_modal, url, false, true);
+                    });
+                    //End Add subproject step
+
+                    //Add subproject level
+                    let add_evolution_level = $(".add_evolution_level");
+                    add_evolution_level.on('click', function () {
+                        let list_id_attr = add_evolution_level.attr("id").split("_");
+                        let id_add_evolution_level = list_id_attr[list_id_attr.length - 1];
+                        let url = "{% url 'subprojects:step:subproject_level_add_form' object.id 0 %}".replace("/0", ("/"+id_add_evolution_level));
+                        console.log(url);
+                        add_subproject_tracking_level_form_ajax.load_form('#subproject_add_level_form', status_change_modal, url, false, true);
+                    });
+                    //End Add subproject level
+
+                    //Update Subproject Step-Level
+                    comment_thread_a.on('click', function () {
+                        if(this.classList.contains('subproject_step')){
+                            add_subproject_tracking_step_form_ajax.load_form('#subproject_add_step_form', status_change_modal, this.id, false, true);
+                        }else if(this.classList.contains('subproject_level')){
+                            add_subproject_tracking_level_form_ajax.load_form('#subproject_add_level_form', status_change_modal, this.id, false, true);
+                        }
+                    });
+                    //End Update Subproject Step-Level 
+                    
+                    //Delete Subproject Step-Level
+                    $(".subproject_step_delete").on('click', function () {
+                        delete_subproject_tracking_step_form_ajax.load_form('#subproject_deletion_step_form', status_change_modal, this.id);
+                    });
+                    //End Delete Subproject Step-Level
+
+                    //Display Subproject Step-Level Files
+                    $(".display_subproject_step_files").on('click', function () {
+                        display_subproject_tracking_step_files_ajax.load_form('#display_subproject_step_files_form', status_change_modal, this.id);
+                    });
+                    //End Display Subproject Step-Level Files
+
+                    load_subproject_step_add_spin.hide();
+                });
+
+                $('#subproject_step_graph').load("{% url 'subprojects:step:subproject_step_graph_template' object.id %}", function (
+                    response, status, xhr) {
+                    if (status === "error") {
+                        alert(error_server_message + "Error " + response.status);
+                    }
+                    load_subproject_step_graph_spin.hide();
+                });
+            }
+            //End Subproject Tracking add
+
+
+
+
+
+
+
+            loadSubprojectStep()
         });
 
 </script>

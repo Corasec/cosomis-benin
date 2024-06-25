@@ -3,19 +3,8 @@ from django.db import models
 from cdd_client import CddClient
 from django.db.models.signals import post_save, post_delete
 from cosomis.constants import ADMINISTRATIVE_LEVEL_TYPE
-
-
-# Create your models here.
-class BaseModel(models.Model):
-    created_date = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    updated_date = models.DateTimeField(auto_now=True, blank=True, null=True)
-
-    class Meta:
-        abstract = True
-
-    def save_and_return_object(self):
-        super().save()
-        return self
+from cosomis.models_base import BaseModel
+from django.utils.translation import gettext_lazy as _
 
 
 class AdministrativeLevel(BaseModel):
@@ -40,6 +29,25 @@ class AdministrativeLevel(BaseModel):
     latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True)
     longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True)
     no_sql_db_id = models.CharField(null=True, blank=True, max_length=255)
+    # tg fields
+    geographical_unit = models.ForeignKey(
+        "GeographicalUnit",
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        verbose_name=_("Geographical unit"),
+    )
+    cvd = models.ForeignKey(
+        "CVD", null=True, blank=True, on_delete=models.CASCADE, verbose_name=_("CVD")
+    )
+    frontalier = models.BooleanField(default=True, verbose_name=_("Frontalier"))
+    rural = models.BooleanField(default=True, verbose_name=_("Rural"))
+    # financial field
+    # bank = models.ForeignKey(Bank, null=True, blank=True, on_delete=models.SET_NULL, verbose_name=_("Bank"))
+    # bank_code = models.CharField(max_length=10, verbose_name=_("Bank code"), null=True, blank=True)
+    # guichet_code = models.CharField(max_length=10, verbose_name=_("Guichet code"), null=True, blank=True)
+    # account_number = models.CharField(max_length=100, verbose_name=_("Account number"), null=True, blank=True)
+    # rib = models.CharField(max_length=3, verbose_name=_("RIB"), null=True, blank=True)
 
     class Meta:
         unique_together = ["name", "parent", "type"]
@@ -48,14 +56,41 @@ class AdministrativeLevel(BaseModel):
         return self.name
 
     def get_list_priorities(self):
-        """Get the list of all priorities
-        that the administrative is linked to"""
-        return self.villagepriority_set.all()
+        """Method to get the list of the all priorities that the administrative is linked"""
+        return self.villagepriority_set.get_queryset()
+
+    # def get_list_priorities(self):
+    #     """Get the list of all priorities
+    #     that the administrative is linked to"""
+    #     return self.villagepriority_set.all()
+
+    # def get_list_subprojects(self):
+    #     """Get the list of all subprojects
+    #     that the administrative is linked to"""
+    #     return self.subproject_set.all()
 
     def get_list_subprojects(self):
-        """Get the list of all subprojects
-        that the administrative is linked to"""
-        return self.subproject_set.all()
+        """Method to get the list of the all subprojects that the administrative is linked"""
+        if self.cvd:
+            return self.cvd.subproject_set.get_queryset().get_actifs()
+        return []
+
+    def get_facilitator(self, projects_ids):
+        for (
+            assign
+        ) in self.assignadministrativeleveltofacilitator_set.get_queryset().filter(
+            project_id__in=projects_ids, activated=True
+        ):
+            return assign.facilitator
+        return None
+
+    @property
+    def children(self):
+        return self.administrativelevel_set.get_queryset()
+
+    def get_list_geographical_unit(self):
+        """Method to get the list of the all Geographical Unit that the administrative is linked"""
+        return self.geographicalunit_set.get_queryset()
 
 
 class GeographicalUnit(BaseModel):
@@ -110,6 +145,12 @@ class CVD(BaseModel):
     secretary_name_of_the_cvd = models.CharField(max_length=100, null=True, blank=True)
     secretary_phone_of_the_cvd = models.CharField(max_length=15, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
+    # financial field
+    # bank = models.ForeignKey(Bank, null=True, blank=True, on_delete=models.SET_NULL, verbose_name=_("Bank"))
+    # bank_code = models.CharField(max_length=10, verbose_name=_("Bank code"), null=True, blank=True)
+    # guichet_code = models.CharField(max_length=10, verbose_name=_("Guichet code"), null=True, blank=True)
+    # account_number = models.CharField(max_length=100, verbose_name=_("Account number"), null=True, blank=True)
+    # rib = models.CharField(max_length=3, verbose_name=_("RIB"), null=True, blank=True)
 
     def get_name(self):
         administrativelevels = self.get_villages()

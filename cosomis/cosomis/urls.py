@@ -12,6 +12,7 @@ Class-based views
 Including another URLconf
     1. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+
 from django.urls import path
 from django.conf.urls import include
 from django.contrib import admin
@@ -19,7 +20,7 @@ from django.conf.urls.i18n import i18n_patterns
 from django.conf import settings
 from django.conf.urls.static import static
 
-from .views import set_language
+from . import views
 
 # urlpatterns = [
 #     path('admin/', admin.site.urls),
@@ -28,7 +29,10 @@ from .views import set_language
 #     path('administrative-levels/', include('administrativelevels.urls')),
 #     path('unicorn/', include('django_unicorn.urls')),
 # ]
-urlpatterns = [path("set-language/", set_language, name="set_language")]
+urlpatterns = [
+    path("set-language/", views.set_language, name="set_language"),
+    path("api/", include("cosomis.urls_api")),
+]
 
 urlpatterns += i18n_patterns(
     path("admin/", admin.site.urls),
@@ -38,6 +42,10 @@ urlpatterns += i18n_patterns(
     path("unicorn/", include("django_unicorn.urls")),
     path("kobotoolbox/", include("kobotoolbox.urls")),
     path("services/", include("administrativelevels.libraries.services.urls")),
+    # path('dashboard/', include('dashboard.urls')),
+    # path('financial/', include('financial.urls')),
+    # path('custom-file/', include('custom_file.urls')),
+    # path('delete-object/<int:object_id>/<str:type>/', views.DeleteObjectFormView.as_view(), name='object_deletion_form'),
 )
 
 

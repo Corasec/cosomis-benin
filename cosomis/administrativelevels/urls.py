@@ -93,4 +93,9 @@ urlpatterns = [
         views_json.GetAdministrativeLevelByTypeView.as_view(),
         name="get_administrative_level_by_type",
     ),  # Get AdministrativeLevel by type
+    path("components/", include("administrativelevels.urls_component")),
+    path("grm/", include("administrativelevels.grm.urls")),
+    path(
+        "download-cvd/", views.DownloadCVDCSVView.as_view(), name="download_cvd"
+    ),  # The path to upload CVD on CSV file and save in db
 ]

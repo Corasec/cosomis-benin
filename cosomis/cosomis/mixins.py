@@ -6,6 +6,7 @@ class PageMixin(object):
     active_level1 = None
     active_level2 = None
     breadcrumb = None
+    form_mixin = None
 
     def get_context_data(self, **kwargs):
         ctx = super(PageMixin, self).get_context_data(**kwargs)
@@ -13,6 +14,7 @@ class PageMixin(object):
         ctx.setdefault("active_level1", self.active_level1)
         ctx.setdefault("active_level2", self.active_level2)
         ctx.setdefault("breadcrumb", self.breadcrumb)
+        ctx.setdefault("form_mixin", self.form_mixin)
         return ctx
 
 
@@ -24,6 +26,7 @@ class ModalFormMixin(object):
     picture = None
     picture_class = None
     submit_button = None
+    form_class_color = "primary"
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
@@ -33,6 +36,29 @@ class ModalFormMixin(object):
         ctx.setdefault("picture", self.picture)
         ctx.setdefault("picture_class", self.picture_class)
         ctx.setdefault("submit_button", self.submit_button)
+        ctx.setdefault("form_class_color", self.form_class_color)
+        return ctx
+
+
+class ModalListMixin(object):
+    template_name = "common/modal_list.html"
+    id_list = "list"
+    title = None
+    subtitle = None
+    picture = None
+    picture_class = None
+    submit_button = None
+    list_class_color = "primary"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx.setdefault("id_list", self.id_list)
+        ctx.setdefault("title", self.title)
+        ctx.setdefault("subtitle", self.subtitle)
+        ctx.setdefault("picture", self.picture)
+        ctx.setdefault("picture_class", self.picture_class)
+        ctx.setdefault("submit_button", self.submit_button)
+        ctx.setdefault("list_class_color", self.list_class_color)
         return ctx
 
 

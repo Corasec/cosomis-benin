@@ -1,0 +1,803 @@
+{% load static i18n bootstrap4 custom_tags %}
+
+<style>
+    .card_image_transparent {
+        opacity: 0.5;
+        width: 60px; 
+        height: 60px; 
+        margin: auto !important; 
+        margin-top: 11px !important
+    }
+</style>
+
+
+
+
+<div class="card">
+    <div class="card-body">
+
+        <div class="row">
+            <div class="col-3">
+                <div class="card mb-0" style="max-width: 540px;">
+                    <div class="row no-gutters">
+                        <div class="col-md-4 ">
+                            <img 
+                                src="{% static 'images/subproject.png' %}" 
+                                class="card-img card_image_transparent" alt="infrastructure">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-size: 10px;">{% translate "Subprojects" %}</h5><br />
+                                <p class="card-title dashboard-model" 
+                                    href="#subprojects-number" 
+                                    data-href="{% url 'dashboard:dashboard_summary_subprojects_details' %}"
+                                    style="font-weight: bold !important; cursor: pointer; text-decoration: underline;">
+                                    {{ total_subproject }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overlay" id="subprojects-number-spin">
+                        <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-3">
+                <div class="card mb-0" style="max-width: 540px;">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img 
+                                src="{% static 'images/subproject.png' %}" 
+                                class="card-img card_image_transparent" alt="infrastructure">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-size: 10px;">{% translate "Subprojects not start" %}</h5><br />
+                                <p class="card-title text-warning dashboard-model" 
+                                    href="#subprojects-not-started" 
+                                    data-href="{% url 'dashboard:dashboard_summary_subprojects_details' %}"
+                                    style="font-weight: bold !important; cursor: pointer; text-decoration: underline;">
+                                    {{ total_subproject_not_started }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overlay" id="subprojects-not-started-spin">
+                        <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card mb-0" style="max-width: 540px;">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img 
+                                src="{% static 'images/subproject.png' %}" 
+                                class="card-img card_image_transparent" alt="infrastructure">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-size: 10px;">{% translate "Subprojects in progress" %}</h5><br />
+                                <p class="card-title text-info dashboard-model" 
+                                    href="#subprojects-in-progress" 
+                                    data-href="{% url 'dashboard:dashboard_summary_subprojects_details' %}"
+                                    style="font-weight: bold !important; cursor: pointer; text-decoration: underline;">
+                                    {{ total_subproject_in_progress }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overlay" id="subprojects-in-progress-spin">
+                        <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card mb-0" style="max-width: 540px;">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img 
+                                src="{% static 'images/subproject.png' %}" 
+                                class="card-img card_image_transparent" alt="infrastructure">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-size: 10px;">{% translate "Subprojects completed" %}</h5><br />
+                                <p class="card-title text-success dashboard-model" 
+                                    href="#subprojects-completed" 
+                                    data-href="{% url 'dashboard:dashboard_summary_subprojects_details' %}"
+                                    style="font-weight: bold !important; cursor: pointer; text-decoration: underline;">
+                                    {{ total_subproject_completed }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overlay" id="subprojects-completed-spin">
+                        <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-3">
+                <div class="card mb-0" style="max-width: 540px;">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img 
+                                src="{% static 'images/infrastructures_.png' %}" 
+                                class="card-img card_image_transparent" alt="infrastructure">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-size: 10px;">{% translate "Infrastructures" %}</h5><br />
+                                <p class="card-title dashboard-model" 
+                                    href="#infrastrutures" 
+                                    data-href="{% url 'dashboard:dashboard_summary_subprojects_details' %}"
+                                    style="font-weight: bold !important; cursor: pointer; text-decoration: underline;">
+                                    {{ total }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overlay" id="infrastrutures-spin">
+                        <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card mb-0" style="max-width: 540px;">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img 
+                                src="{% static 'images/infrastructures_.png' %}" 
+                                class="card-img card_image_transparent" alt="infrastructure">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-size: 10px;">{% translate "Infrastructures not start" %}</h5><br />
+                                <p class="card-title text-warning dashboard-model" 
+                                    href="#infrastruture-not-started" 
+                                    data-href="{% url 'dashboard:dashboard_summary_subprojects_details' %}"
+                                    style="font-weight: bold !important; cursor: pointer; text-decoration: underline;">
+                                    {{ total_infrastruture_not_started }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overlay" id="infrastruture-not-started-spin">
+                        <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card mb-0" style="max-width: 540px;">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img 
+                                src="{% static 'images/infrastructures_.png' %}" 
+                                class="card-img card_image_transparent" alt="infrastructure">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-size: 10px;">{% translate "Infrastructures in progress" %}</h5><br />
+                                <p class="card-title text-info dashboard-model" 
+                                    href="#infrastruture-in-progress" 
+                                    data-href="{% url 'dashboard:dashboard_summary_subprojects_details' %}"
+                                    style="font-weight: bold !important; cursor: pointer; text-decoration: underline;">
+                                    {{ total_infrastruture_in_progress }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overlay" id="infrastruture-in-progress-spin">
+                        <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card mb-0" style="max-width: 540px;">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img 
+                                src="{% static 'images/infrastructures_.png' %}" 
+                                class="card-img card_image_transparent" alt="infrastructure">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-size: 10px;">{% translate "Infrastructures completed" %}</h5><br />
+                                <p class="card-title text-success dashboard-model" 
+                                    href="#infrastruture-completed" 
+                                    data-href="{% url 'dashboard:dashboard_summary_subprojects_details' %}"
+                                    style="font-weight: bold !important; cursor: pointer; text-decoration: underline;">
+                                    {{ total_infrastruture_completed }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overlay" id="infrastruture-completed-spin">
+                        <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% comment %} <div class="row">
+            <div class="col-3">
+                <div class="card mb-0" style="max-width: 540px;">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img 
+                                src="{% static 'images/infrastructure.png' %}" 
+                                class="card-img card_image_transparent" alt="infrastructure">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-size: 10px;">{% translate "Infras with latrines/fences" %}</h5><br />
+                                <p class="card-title dashboard-model" 
+                                    href="#infrastrutures-with-latrines-fences" 
+                                    data-href="{% url 'dashboard:dashboard_summary_subprojects_details' %}"
+                                    style="font-weight: bold !important; cursor: pointer; text-decoration: underline;">
+                                    {{ total_infrastrutures }} ({{ total_latrine_blocks }}/{{ total_fences }})
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overlay" id="infrastrutures-with-latrines-fences-spin">
+                        <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card mb-0" style="max-width: 540px;">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img 
+                                src="{% static 'images/infrastructure.png' %}" 
+                                class="card-img card_image_transparent" alt="infrastructure">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-size: 10px;">{% translate "Infras with latrines/fences not start" %}</h5><br />
+                                <p class="card-title text-warning dashboard-model" 
+                                    href="#infrastrutures-with-latrines-fences-not-started" 
+                                    data-href="{% url 'dashboard:dashboard_summary_subprojects_details' %}"
+                                    style="font-weight: bold !important; cursor: pointer; text-decoration: underline;">
+                                    {{ total_infrastrutures_not_started }} ({{ total_latrines_not_started }}/{{ total_fences_not_started }})
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overlay" id="infrastrutures-with-latrines-fences-not-started-spin">
+                        <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card mb-0" style="max-width: 540px;">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img 
+                                src="{% static 'images/infrastructure.png' %}" 
+                                class="card-img card_image_transparent" alt="infrastructure">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-size: 10px;">{% translate "Infras with latrines/fences in progress" %}</h5><br />
+                                <p class="card-title text-info dashboard-model" 
+                                    href="#infrastrutures-with-latrines-fences-in-progress" 
+                                    data-href="{% url 'dashboard:dashboard_summary_subprojects_details' %}"
+                                    style="font-weight: bold !important; cursor: pointer; text-decoration: underline;">
+                                    {{ total_infrastrutures_in_progress }} ({{ total_latrines_in_progress }}/{{ total_fences_in_progress }})
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overlay" id="infrastrutures-with-latrines-fences-in-progress-spin">
+                        <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card mb-0" style="max-width: 540px;">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img 
+                                src="{% static 'images/infrastructure.png' %}" 
+                                class="card-img card_image_transparent" alt="infrastructure">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-size: 10px;">{% translate "Infras with latrines/fences completed" %}</h5><br />
+                                <p class="card-title text-success dashboard-model" 
+                                    href="#infrastrutures-with-latrines-fences-completed" 
+                                    data-href="{% url 'dashboard:dashboard_summary_subprojects_details' %}"
+                                    style="font-weight: bold !important; cursor: pointer; text-decoration: underline;">
+                                    {{ total_infrastrutures_completed }} ({{ total_latrines_completed }}/{{ total_fences_completed }})
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overlay" id="infrastrutures-with-latrines-fences-completed-spin">
+                        <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+        </div> {% endcomment %}
+                <div class="row">
+            <div class="col-3">
+                <div class="card mb-0" style="max-width: 540px;">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img 
+                                src="{% static 'images/infrastructure.png' %}" 
+                                class="card-img card_image_transparent" alt="infrastructure">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-size: 10px;">{% translate "Latrines and fences" %}</h5><br />
+                                <p class="card-title dashboard-model" 
+                                    href="#latrines-and-fences" 
+                                    data-href="{% url 'dashboard:dashboard_summary_subprojects_details' %}"
+                                    style="font-weight: bold !important; cursor: pointer; text-decoration: underline;">
+                                    {{ total_latrine_blocks }} ({{ total_number_latrine_blocks }}) / {{ total_fences }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overlay" id="latrines-and-fences-spin">
+                        <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card mb-0" style="max-width: 540px;">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img 
+                                src="{% static 'images/infrastructure.png' %}" 
+                                class="card-img card_image_transparent" alt="infrastructure">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-size: 10px;">{% translate "Latrines and fences not start" %}</h5><br />
+                                <p class="card-title text-warning dashboard-model" 
+                                    href="#latrines-and-fences-not-started" 
+                                    data-href="{% url 'dashboard:dashboard_summary_subprojects_details' %}"
+                                    style="font-weight: bold !important; cursor: pointer; text-decoration: underline;">
+                                    {{ total_latrines_not_started }} ({{ total_number_latrine_not_started }}) / {{ total_fences_not_started }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overlay" id="latrines-and-fences-not-started-spin">
+                        <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card mb-0" style="max-width: 540px;">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img 
+                                src="{% static 'images/infrastructure.png' %}" 
+                                class="card-img card_image_transparent" alt="infrastructure">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-size: 10px;">{% translate "Latrines and fences in progress" %}</h5><br />
+                                <p class="card-title text-info dashboard-model" 
+                                    href="#latrines-and-fences-in-progress" 
+                                    data-href="{% url 'dashboard:dashboard_summary_subprojects_details' %}"
+                                    style="font-weight: bold !important; cursor: pointer; text-decoration: underline;">
+                                    {{ total_latrines_in_progress }} ({{ total_number_latrine_in_progress }}) / {{ total_fences_in_progress }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overlay" id="latrines-and-fences-in-progress-spin">
+                        <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <div class="card mb-0" style="max-width: 540px;">
+                    <div class="row no-gutters">
+                        <div class="col-md-4">
+                            <img 
+                                src="{% static 'images/infrastructure.png' %}" 
+                                class="card-img card_image_transparent" alt="infrastructure">
+                        </div>
+                        <div class="col-md-8">
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-size: 10px;">{% translate "Latrines and fences completed" %}</h5><br />
+                                <p class="card-title text-success dashboard-model" 
+                                    href="#latrines-and-fences-completed" 
+                                    data-href="{% url 'dashboard:dashboard_summary_subprojects_details' %}"
+                                    style="font-weight: bold !important; cursor: pointer; text-decoration: underline;">
+                                    {{ total_latrines_completed }}({{ total_number_latrine_completed }}) / {{ total_fences_completed }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="overlay" id="latrines-and-fences-completed-spin">
+                        <i class="fas fa-2x fa-sync-alt fa-spin"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+        
+    </div> 
+</div>
+
+
+
+
+<br />
+
+<div class="card">
+
+
+    <div class="container">
+        <ul class="nav nav-tabs">
+            <li style="width: 50%;" class="nav-item btn"><a style="font-size: 11px;" class="nav-link active nav-tab-toggle" data-toggle="tab" href="#representation_by_sectors" >{% translate "Representation by sector" %}</a></li>
+            <li style="width: 50%;" class="nav-item btn"><a style="font-size: 11px;" class="nav-link nav-tab-toggle" data-toggle="tab" href="#representation_by_type_of_structure" >{% translate "Representation by type of structure" %}</a></li>
+        </ul>
+
+        <div class="tab-content">
+
+                    
+            <div id="representation_by_sectors" class="tab-pane active">
+
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card mb-0">
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card mb-0">
+                                            <table class="table  table-striped table-secondary table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>{% translate "Level" %}</th>
+                                                        <th>{% translate "Number of structure by sector" %}</th>
+                                                        <th>{% translate "Total" %}</th>
+                                                    <tr>
+                                                </thead>
+                                                <tbody>
+                                                    {% for status, sectors in number_subproject_infrastrutures_by_sectors_and_type.items %}
+                                                    <tr>
+                                                        <td>{{ status }}</td>
+                                                        <td align="left">
+                                                            {% for sector, typess in sectors.items %}
+                                                                {% if sector != "total" %}
+                                                                    {% with typess|get:"total" as total %}
+                                                                    {% if total|get:"infrastructures_with_latrines_and_fences" %}
+                                                                        {% if forloop.first %}{% elif forloop.last %} {% translate 'And' %} {% else %}, {% endif %}
+                                                                        <span title='({{ total|get:"subprojects" }} | {{ total|get:"infrastructures" }} | {{ total|get:"infrastructures_with_latrines_and_fences" }})'>
+                                                                            <span style="font-weight: bold;">
+                                                                                {{ total|get:"infrastructures_with_latrines_and_fences" }} 
+                                                                            </span> {{ sector }}
+                                                                        </span>
+                                                                        {% if forloop.last %}.{% endif %}
+                                                                    {% endif  %}
+                                                                    {% endwith %}
+                                                                {% else  %}
+                                                                .
+                                                                {% endif  %}
+                                                            {% endfor %}
+                                                        </td>
+                                                        <td>
+                                                            {% with sectors|get:"total" as total %}
+                                                                {{ total }}
+                                                            {% endwith %}
+                                                        </td>
+                                                    </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <br />
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card mb-0">
+                            {% include 'components/chartPie.html' with componentId='1' datas=pie_graphes|get_on_list:0 sectors_colors=SUB_PROJECT_STATUS_COLOR_TRANSLATE %}
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="card mb-0">
+                            {% include 'components/chartPie.html' with componentId='2' datas=pie_graphes|get_on_list:1 sectors_colors=SUB_PROJECT_SECTORS_COLOR %}
+                        </div>
+                    </div>
+                </div>
+
+                <br />
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card mb-0">
+                            {% include 'components/chartBar.html' with componentId='1' datas=number_subproject_infrastrutures %}
+                        </div>
+                    </div>
+                </div>
+
+                {% comment %} <br />
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card mb-0">
+                            {% include 'components/chartBar.html' with componentId='2' datas=amount_subproject_infrastrutures %}
+                        </div>
+                    </div>
+                </div> {% endcomment %}
+
+                <br />
+                <br />
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card mb-0">
+                                <table class="table table-striped table-secondary table-bordered">
+                                    <thead >
+                                        <tr>
+                                            <th>{% translate "Level" %}</th>
+                                            <th>{% translate "Number by type of structure" %}</th>
+                                            <th>{% translate "Total" %}</th>
+                                        <tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for status, sectors in number_subproject_infrastrutures_by_sectors_and_type.items %}
+                                        <tr>
+                                            <td>{{ status }}</td>
+                                            <td align="left">
+                                                {% for sector, typess in sectors.items %}
+                                                    {% if sector != "total" %}
+                                                        {% with typess|get:"total" as total %}
+                                                        {% if total|get:"infrastructures_with_latrines_and_fences" %}
+                                                            <span style="font-weight: bold;">{{ forloop.counter }}-/ {{ sector }} (
+                                                                {{ total|get:"subprojects" }} | 
+                                                                {{ total|get:"infrastructures" }} | 
+                                                                {{ total|get:"infrastructures_with_latrines_and_fences" }}
+                                                            ) : </span> 
+                                                            {% with typess|get:"types" as types %}
+                                                                {% for type_infra, nbr in types.items %}
+                                                                    {% if nbr and nbr != 0 %}
+                                                                        {% if forloop.first %}{% elif forloop.last %} {% translate 'And' %} {% else %}, {% endif %}
+                                                                        <span style="font-weight: bold;">
+                                                                            {{ nbr }}
+                                                                            {% comment %} {% if elt.classrooms|get_on_list:forloop.counter0 %} 
+                                                                                ({{ elt.classrooms|get_on_list:forloop.counter0 }})
+                                                                            {% endif %} {% endcomment %}
+                                                                        </span> 
+                                                                        {{ type_infra }}
+                                                                        {% if forloop.last %}.{% endif %}
+                                                                    {% endif  %}
+                                                                {% endfor %}
+                                                            {% endwith %}
+                                                            <br />
+                                                        {% endif  %}
+                                                        {% endwith %}
+                                                    {% endif  %}
+                                                {% endfor %}
+                                            </td>
+                                            <td>
+                                                {% with sectors|get:"total" as total %}
+                                                    {{ total }}
+                                                {% endwith %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+
+            <div id="representation_by_type_of_structure" class="tab-pane">
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card mb-0">
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card mb-0">
+                                            <table class="table table-striped table-secondary table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>{% translate "Level" %}</th>
+                                                        <th>{% translate "Number by type of structure" %}</th>
+                                                        <th>{% translate "Total" %}</th>
+                                                    <tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>{% translate "Identified" %}</td>
+                                                        <td align="left">
+                                                            {% with bars_type_structures|get_on_list:0 as elt %}
+                                                                {% for nbr in elt.data %}
+                                                                    {% if nbr and nbr != 0 %}
+                                                                        {% if forloop.first %}{% elif forloop.last %} {% translate 'And' %} {% else %}, {% endif %}
+                                                                        <span style="font-weight: bold;">
+                                                                            {{ nbr }}
+                                                                            {% if elt.classrooms|get_on_list:forloop.counter0 %} 
+                                                                                ({{ elt.classrooms|get_on_list:forloop.counter0 }})
+                                                                            {% endif %}
+                                                                        </span> 
+                                                                        {{ type_structures|get_on_list:forloop.counter0 }}
+                                                                        {% if forloop.last %}.{% endif %}
+                                                                    {% endif  %}
+                                                                {% endfor %}
+                                                            {% endwith %}
+                                                        </td>
+                                                        <td>
+                                                            {{ sum_bars_type_structures|get_on_list:0 }}
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>{% translate "Completed" %}</td>
+                                                        <td align="left">
+                                                            {% with bars_type_structures|get_on_list:3 as elt %}
+                                                                {% for nbr in elt.data %}
+                                                                    {% if nbr and nbr != 0 %}
+                                                                        {% if forloop.first %}{% elif forloop.last %} {% translate 'And' %} {% else %}, {% endif %}
+                                                                        <span style="font-weight: bold;">
+                                                                            {{ nbr }}
+                                                                            {% if elt.classrooms|get_on_list:forloop.counter0 %} 
+                                                                                ({{ elt.classrooms|get_on_list:forloop.counter0 }})
+                                                                            {% endif %}
+                                                                        </span> 
+                                                                        {{ type_structures|get_on_list:forloop.counter0 }}
+                                                                        {% if forloop.last %}.{% endif %}
+                                                                    {% endif  %}
+                                                                {% endfor %}
+                                                            {% endwith %}
+                                                        </td>
+                                                        <td>
+                                                            {{ sum_bars_type_structures|get_on_list:3 }}
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>{% translate "In progress" %}</td>
+                                                        <td align="left">
+                                                            {% with bars_type_structures|get_on_list:2 as elt %}
+                                                                {% for nbr in elt.data %}
+                                                                    {% if nbr and nbr != 0 %}
+                                                                        {% if forloop.first %}{% elif forloop.last %} {% translate 'And' %} {% else %}, {% endif %}
+                                                                        <span style="font-weight: bold;">
+                                                                            {{ nbr }}
+                                                                            {% if elt.classrooms|get_on_list:forloop.counter0 %} 
+                                                                                ({{ elt.classrooms|get_on_list:forloop.counter0 }})
+                                                                            {% endif %}
+                                                                        </span> 
+                                                                        {{ type_structures|get_on_list:forloop.counter0 }}
+                                                                        {% if forloop.last %}.{% endif %}
+                                                                    {% endif  %}
+                                                                {% endfor %}
+                                                            {% endwith %}
+                                                        </td>
+                                                        <td>
+                                                            {{ sum_bars_type_structures|get_on_list:2 }}
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>{% translate "Not start" %}</td>
+                                                        <td align="left">
+                                                            {% with bars_type_structures|get_on_list:1 as elt %}
+                                                                {% for nbr in elt.data %}
+                                                                    {% if nbr and nbr != 0 %}
+                                                                        {% if forloop.first %}{% elif forloop.last %} {% translate 'And' %} {% else %}, {% endif %}
+                                                                        <span style="font-weight: bold;">
+                                                                            {{ nbr }}
+                                                                            {% if elt.classrooms|get_on_list:forloop.counter0 %} 
+                                                                                ({{ elt.classrooms|get_on_list:forloop.counter0 }})
+                                                                            {% endif %}
+                                                                        </span> 
+                                                                        {{ type_structures|get_on_list:forloop.counter0 }}
+                                                                        {% if forloop.last %}.{% endif %}
+                                                                    {% endif  %}
+                                                                {% endfor %}
+                                                            {% endwith %}
+                                                        </td>
+                                                        <td>
+                                                            {{ sum_bars_type_structures|get_on_list:1 }}
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+
+                <br />
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card mb-0">
+                            {% include 'components/chartBar.html' with componentId='7' datas=number_structures_by_type %}
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+        
+</div>
+
+
+
+
+    <script type="text/javascript">
+            $("#subprojects-number-spin").hide();
+            $("#subprojects-completed-spin").hide();
+            $("#subprojects-in-progress-spin").hide();
+            $("#subprojects-not-started-spin").hide();
+
+            $("#infrastrutures-spin").hide();
+            $("#infrastrutures-with-latrines-fences-spin").hide();
+            $("#infrastrutures-with-latrines-fences-completed-spin").hide();
+            $("#infrastrutures-with-latrines-fences-in-progress-spin").hide();
+            $("#infrastrutures-with-latrines-fences-not-started-spin").hide();
+            
+            $("#latrines-and-fences-spin").hide();
+            $("#latrines-and-fences-completed-spin").hide();
+            $("#latrines-and-fences-in-progress-spin").hide();
+            $("#latrines-and-fences-not-started-spin").hide();
+            
+            $("#infrastruture-completed-spin").hide();
+            $("#infrastruture-in-progress-spin").hide();
+            $("#infrastruture-not-started-spin").hide();
+            var details_modal_objects = $('#detailsModalObjects');
+            document.querySelectorAll('p.dashboard-model').forEach(function(element){
+                element.addEventListener('click', function (e) {
+                    
+                    e.preventDefault();	
+
+                    var elt = $(this).attr('href').replace('#', '');
+
+                    loadPage(
+                        $(this).attr('data-href'), details_modal_objects, $(`#${elt}-spin`),
+                        administrative_level_id={{ administrative_level_id|safe }},
+                        administrative_level_type="{{ administrative_level_type }}",
+                        list_type_search=elt
+                    );
+                    //details_modal_objects.find('.modal-dialog').addClass('');
+                    //details_modal_objects.modal('show');
+
+
+                }); // addEventListener
+            }) // forEach
+        
+        
+    </script>

@@ -1,0 +1,371 @@
+{% load static i18n bootstrap4 custom_tags humanize  %}
+{% if datas %}
+
+{% make_list "summary_subprojects_by_sectors_1" "summary_administrative_level_waves" "summary_administrative_level_children" as ids_to_skip_to_format %}
+{% make_list "Nombre de Sous-projets" "Number of subprojects" "Nombre d'infrastructures pour le sous-projet" "Number of subproject infrastructures" "Step" "Etape" "N°" "Actual level" "Niveau réel" "Number" "Nombre" as columns_to_skip_to_format %}
+{% make_list "Actual level" "Niveau réel" as columns_to_add_percent %}
+{% make_list "Secteurs" "Sectors" "Type" "Ouvrages" "Structures" "Step" "Etape" "Cantons covered" "Cantons couverts" as columns_to_put_left %}
+{% make_list "FCFA" "€" "$" as columns_contains_amount_symbol_to_set_to_width_to_88 %}
+
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="font-weight-bold">{{ datas_title }}</h5>
+    </div>
+
+    {% if not headers %}
+    <div class="row">
+        <div class="col-10">
+            <div class="input-group mb-3 search-bar">
+                <div class="input-group-prepend">
+                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                </div>
+                <input class="form-control" id="search-{{ data_id }}" placeholder="{% translate 'Search' %}...">
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="text-right mb-4">
+                <form method='post'action="{% url 'dashboard:dashboard_download_excel_file' %}">
+                    <button class="btn btn-primary btn-xs" type="submit" id="export-{{ data_id }}">
+                        <i class="fa fa-file-export"></i> {% translate 'Export file' %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div 
+    {% comment %} class="card-body table-responsive" {% endcomment %}
+    >
+        <table id="table-{{ data_id }}" border="1"
+            {% comment %} class="table {{ table_class_style }}"  {% endcomment %}
+            style="width: 100% !important;"
+            >
+            <thead class="{{ table_thead_class_style }}">
+            {% if queryset_results.administrative_level_type %}
+            <tr>
+                <td colspan="{{ datas.keys|length }}" scope="col">{{ queryset_results.administrative_level_type }}</td>
+            </tr>
+            {% endif %}
+            
+            {% if headers %}
+                {% for k, v_header_columns in headers.items %}
+                    <tr>
+                        {% for column in v_header_columns %}
+                        <td 
+                            {% if column in columns_to_skip_to_format %}
+                            class="numberColumn"
+                            {% endif %}
+
+                            {% if "FCFA" in column or "€" in column or "$" in column %}
+                            style="width: 100px !important;"
+                            {% endif %}
+                        > {{ column }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            {% else %}
+            <tr>
+                {% for column in datas.keys %}
+                <td {% if "FCFA" in column or "€" in column or "$" in column %}
+                            style="width: 100px !important;"
+                            {% endif %}> {{ column }}</td>
+                {% endfor %}
+            </tr>
+            {% endif %}
+            </thead>
+            <tbody>
+                {% for i in datas_length_loop %}
+                <tr>
+                    {% for column in datas.keys %}
+                    <td 
+                        {% if column in columns_to_put_left %}
+                            align="left"
+                        {% endif %}
+                        >
+                        {% with datas_values|get_on_list:forloop.counter0 as value %}
+                            {% with value|get:i as v %}
+                                {% with v|isnumber as v_isnumber %}
+                                    {% if v_isnumber and data_id not in ids_to_skip_to_format and column not in columns_to_skip_to_format %}
+                                        {{ v|separate_with_space }}
+                                    {% elif v_isnumber %}
+                                        {{ v|remove_zeros_on_zeros }}
+                                    {% elif column in columns_to_add_percent %}
+                                        {% if v %}{{ v }}{% endif %}
+                                    {% elif '\n' in v %}
+                                        {% for line in v|split:'\n' %}
+                                            {{ line }}<br>
+                                        {% endfor %}
+                                    {% else %}
+                                        {% if v %}{{ v|safe  }}{% else %}  {% endif %}
+                                    {% endif %}
+
+                                    {% if column in columns_to_add_percent and v %}{% endif %}
+
+                                {% endwith %}
+                            {% endwith %}
+                        {% endwith %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div id="pagination"></div>
+
+    </div>
+</div>
+{% else %}
+<div class="font-weight-bold d-flex justify-content-center text-danger" >
+    <p>{% translate 'Empty!' %}</p>
+</div>
+{% endif %}
+
+<a id="downloard_a"></a>
+
+
+<!-- DataTables export files -->
+{% include 'layouts/datatable-js.html' %}
+
+<script src="{% static 'js/sort_html_table.js' %}"></script>
+
+<script type="text/javascript">
+$(document).ready(function () {
+    var tableId="table-{{ data_id }}";
+    var index_header = 0;
+    // Add custom sorting method for numerical data
+jQuery.extend(jQuery.fn.dataTableExt.oSort, {
+    "numeric-comma-pre": function (a) {
+        var x = (a == "-") ? 0 : a.replace(/,/, ".").replace(" ", "");
+        return parseFloat(x);
+    },
+
+    "numeric-comma-asc": function (a, b) {
+        var x = (a == "-") ? 0 : a.replace(/,/, ".").replace(" ", "");
+        var y = (b == "-") ? 0 : b.replace(/,/, ".").replace(" ", "");
+        return parseFloat(x) - parseFloat(y);
+    },
+
+    "numeric-comma-desc": function (a, b) {
+        var x = (a == "-") ? 0 : a.replace(/,/, ".").replace(" ", "");
+        var y = (b == "-") ? 0 : b.replace(/,/, ".").replace(" ", "");
+        return parseFloat(y) - parseFloat(x);
+    }
+});
+
+
+    var columns_number = [];
+    if("{{ data_id }}" == "summary_administrative_level_waves"){
+        columns_number = [0, 2, 3, 4, 5, 6];
+    }
+    else if("{{ data_id }}" == "summary_administrative_level_waves_times"){
+        columns_number = [];
+    }
+    else if("{{ data_id }}" == "summary_administrative_level_children"){
+        columns_number = [1, 2, 3, 4, 5];
+    }
+    else if("{{ data_id }}" == "summary_administrative_level_allocation"){
+        columns_number = [2, 3, 4, 5, 6];
+        console.log(columns_number);
+    }
+    else if("{{ data_id }}" == "summary_subprojects_by_sectors_1"){
+        columns_number = [2, 3, 4, 5];
+    }
+    else if("{{ data_id }}" == "summary_amount_subprojects_by_sectors_1"){
+        columns_number = [1, 2, 3, 4, 5, 6];
+    }
+    else if("{{ data_id }}" == "summary_subprojects_by_sectors_and_steps"){
+        columns_number = [0, 5, 6, 7];
+    }
+    else if("{{ data_id }}" == "summary_subprojects_by_steps_already_track"){
+        columns_number = [1];
+    }
+
+
+// Function to extract table data into a JavaScript list
+function extractTableData(tableId, index_header) {
+  const table = document.getElementById(tableId);
+  console.log(table);
+  const rows = table.getElementsByTagName('tr');
+  const dataHeader = {};
+  const dataList = [];
+
+  var cells = rows[index_header].getElementsByTagName('td');
+  for (let i = 0; i < cells.length; i++) {
+    dataHeader[i] = cells[i].innerText.trim();
+  }
+  
+  // Start loop from index 1 to skip header row
+  for (let i = 1; i < rows.length; i++) {
+    cells = rows[i].getElementsByTagName('td');
+    const rowData = {};
+    for (const [key, value] of Object.entries(dataHeader)) {
+        rowData[value] = cells[key].innerText.trim()
+    }
+    dataList.push(rowData);
+  }
+
+  return dataList;
+}
+function extractTableHeader(tableId, index_header) {
+  const table = document.getElementById(tableId);
+  console.log(table);
+  const rows = table.getElementsByTagName('tr');
+  const dataHeader = {};
+  const dataList = [];
+
+  var cells = rows[index_header].getElementsByTagName('td');
+  for (let i = 0; i < cells.length; i++) {
+    dataHeader[i] = cells[i].innerText.trim();
+  }
+
+  return dataHeader;
+}
+
+
+
+    // Sample data (replace this with your actual data)
+var dataHeader = extractTableHeader(tableId, index_header);
+var data = extractTableData(tableId, index_header);
+console.log(data);
+
+var pageSize = 5; // Number of rows per page
+var currentPage = 1;
+
+function displayTableData(tableId, data, page) {
+    var tableBody = document.getElementById(tableId);
+    console.log(tableBody);
+    tableBody.innerHTML = ""; // Clear existing rows
+
+    var start = (page - 1) * pageSize;
+    var end = start + pageSize;
+    var paginatedData = data.slice(start, end);
+
+    paginatedData.forEach(function (item) {
+        console.log(item)
+        var row = document.createElement("tr");
+        for (const [key, value] of Object.entries(dataHeader)) {
+        row.innerHTML += "<td>" + item[value] + "</td>";
+    }
+        
+        tableBody.appendChild(row);
+    });
+}
+
+function displayPagination(tableId, data) {
+    var totalPages = Math.ceil(data.length / pageSize);
+    var pagination = document.querySelector("#pagination");
+    pagination.innerHTML = "";
+
+    for (var i = 1; i <= totalPages; i++) {
+        var link = document.createElement("a");
+        link.href = "#";
+        link.textContent = i;
+        link.addEventListener("click", function (event) {
+            event.preventDefault();
+            currentPage = parseInt(event.target.textContent);
+            displayTableData(tableId, data, currentPage);
+            updatePaginationLinks();
+        });
+        pagination.appendChild(link);
+    }
+
+    updatePaginationLinks();
+}
+
+function updatePaginationLinks() {
+    var paginationLinks = document.querySelectorAll("#pagination a");
+    paginationLinks.forEach(function (link) {
+        if (parseInt(link.textContent) === currentPage) {
+            link.classList.add("active");
+        } else {
+            link.classList.remove("active");
+        }
+    });
+}
+
+// Initial display
+displayTableData(tableId, data, currentPage);
+displayPagination(tableId, data);
+
+
+
+
+
+
+
+    {% comment %} $(document).ready(function () {
+        {% get_current_language as lang %}
+        var columns_datatable = []        
+
+        let table_subprojects_number = $('#table-{{ data_id }}').DataTable({
+            {% if not_allow_datatable_auto_width %}bAutoWidth: false,{% endif %}
+            language: {
+                url: '{% static 'AdminLTE/plugins/datatables/locale/lang.json' %}'.replace('lang', '{{ lang }}')
+            },
+
+            dom: {% if not headers %}'Blrtip'{% else %}'Blfrtip'{% endif %},
+
+            buttons: [ 'copy', 'excel', 'pdf', 'colvis' ],
+        
+            lengthMenu: [4, 8, 10, 20, 50, 100, 200, 500, 1000, 10000],
+            pageLength: 10,
+            order: [],
+            columnDefs: [
+                { type: 'numeric-comma', targets: columns_number }
+            ]
+        });
+
+        table_subprojects_number.buttons().container()
+        .appendTo( '#example_wrapper .col-md-6:eq(0)' );
+
+
+        $('#search-{{ data_id }}').on('keyup', function () {
+            table_subprojects_number.search($(this).val()).draw();
+        });
+        
+
+
+        {% if not headers %}
+        $("#export-{{ data_id }}").on("click", function (event) {
+            event.preventDefault();
+            var datas_json = {{ datas|safe }};
+            $.ajax({
+                    type: "POST",
+                    url: $(this).parent().attr('action'),
+                    headers:{
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    data: JSON.stringify({
+                        datas: datas_json,
+                        type_datas: '{{ data_id }}' + '_{{ queryset_results.administrative_level_type }}_'
+                    }),
+                    success: function (response) {
+                        if(response.error){
+                            alert(response.error);
+                            return;
+                        }else{
+                            window.open('{% static 'o' %}'.replace('o', response), '_blank');
+                        }
+                    },
+                    error: function (response) {
+                        alert(error_server_message + "Error " + response.status);
+                    }
+                });
+
+
+        });
+        {% endif %}
+
+                        
+    }); {% endcomment %}
+
+
+    });
+</script>
+
+
+
+            {% comment %} columns: columns_datatable, {% endcomment %}

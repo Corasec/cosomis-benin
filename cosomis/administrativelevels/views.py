@@ -29,6 +29,9 @@ from usermanager.permissions import (
     AdminPermissionRequiredMixin,
 )
 from cosomis.constants import ADMINISTRATIVE_LEVEL_TYPE
+from administrativelevels.functions import get_administrative_level_ids_descendants
+from administrativelevels import functions_cvd as cvd_functions
+
 
 SEARCH_PLACEHOLDER = "Rechercher"
 
@@ -223,9 +226,11 @@ class UploadCSVView(
                     file_path,
                 ) = administrativelevels_functions.save_csv_datas_priorities_in_db(
                     datas,
-                    administrative_level_id
-                    if bool(request.POST.get("administrative_level_id_checkbox"))
-                    else 0,
+                    (
+                        administrative_level_id
+                        if bool(request.POST.get("administrative_level_id_checkbox"))
+                        else 0
+                    ),
                     _type,
                 )  # call function to save CSV datas in database
 
@@ -301,13 +306,36 @@ class DownloadCSVView(PageMixin, LoginRequiredMixin, TemplateView):
 
     def post(self, request, *args, **kwargs):
         file_path = ""
+        administrative_level_ids_get = self.request.POST.getlist("value_of_type", None)
+        administrative_level_type = self.request.POST.get("type", "All").title()
+
+        administrative_level_type = (
+            "All"
+            if administrative_level_type in ("", "null", "undefined")
+            else administrative_level_type
+        )
+
+        ald_filter_ids = []
+        administrative_levels_ids = []
+        if not administrative_level_ids_get:
+            administrative_level_ids_get.append("")
+        for ald_id in administrative_level_ids_get:
+            ald_id = 0 if ald_id in ("", "null", "undefined", "All") else ald_id
+            administrative_levels_ids += get_administrative_level_ids_descendants(
+                ald_id, None, []
+            )
+            if ald_id:
+                ald_filter_ids.append(int(ald_id))
+
+        administrative_levels_ids = list(set(administrative_levels_ids))
+
         try:
             file_path = administrativelevels_functions.get_administratives_levels_under_file_excel_or_csv(
-                file_type=request.POST.get("file_type"),
-                params={
-                    "type": request.POST.get("type"),
-                    "value_of_type": request.POST.get("value_of_type"),
-                },
+                request.POST.get(
+                    "file_type"
+                ),  # file_type=request.POST.get("file_type"),
+                administrative_levels_ids,
+                # params={"type":request.POST.get("type"), "value_of_type":request.POST.get("value_of_type")}
             )
 
         except Exception as exc:
@@ -1005,3 +1033,57 @@ class CVDDetailView(PageMixin, LoginRequiredMixin, DetailView):
         {"url": reverse_lazy("administrativelevels:cvds_list"), "title": _("CVD")},
         {"url": "", "title": title},
     ]
+
+
+class DownloadCVDCSVView(PageMixin, LoginRequiredMixin, TemplateView):
+    """Class to download CVD under excel file"""
+
+    template_name = "components/download.html"
+    context_object_name = "Download"
+    title = _("Download")
+    active_level1 = "administrative_levels"
+    breadcrumb = [
+        {"url": "", "title": title},
+    ]
+
+    def post(self, request, *args, **kwargs):
+        file_path = ""
+        administrative_level_ids_get = self.request.POST.getlist("value_of_type", None)
+        administrative_level_type = self.request.POST.get("type", "All").title()
+
+        administrative_level_type = (
+            "All"
+            if administrative_level_type in ("", "null", "undefined")
+            else administrative_level_type
+        )
+
+        ald_filter_ids = []
+        administrative_levels_ids = []
+        if not administrative_level_ids_get:
+            administrative_level_ids_get.append("")
+        for ald_id in administrative_level_ids_get:
+            ald_id = 0 if ald_id in ("", "null", "undefined", "All") else ald_id
+            administrative_levels_ids += get_administrative_level_ids_descendants(
+                ald_id, None, []
+            )
+            if ald_id:
+                ald_filter_ids.append(int(ald_id))
+
+        administrative_levels_ids = list(set(administrative_levels_ids))
+
+        try:
+            file_path = cvd_functions.get_cvd_under_file_excel_or_csv(
+                request.POST.get("file_type"), administrative_levels_ids
+            )
+
+        except Exception as exc:
+            messages.info(request, _("An error has occurred..."))
+
+        if not file_path:
+            return redirect("administrativelevels:list")
+        else:
+            return download_file.download(
+                request,
+                file_path,
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            )

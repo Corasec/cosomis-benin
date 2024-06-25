@@ -24,6 +24,8 @@
                         </div>
                         {% endif %}
                         <div class="btn-group pull-right">
+                            <a class="btn btn-primary" href="#" data-toggle="modal" data-target="#map-legen">{% translate 'Legend' %}</a>
+                             &nbsp; &nbsp; 
                             <a class="btn btn-primary" href="{% url 'subprojects:list' %}">{% translate 'List Subprojects' %}</a>
                         </div>
                     </div>
@@ -31,20 +33,26 @@
                 <div class="card-body">
                     <div class="overlay-wrapper">
                         <div class="row">
-                            <div class="col-4">
+                            {% comment %} <div class="col-4">
                                 <div class="card">
                                     <div class="card-body">
-
+                                        {% for step, color in sub_project_status_color_translation.items %}
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="row carte-legend">
-                                                    <div class="col-4">
-                                                        <img src="{% static 'images/identified.png' %}" width="50" height="60" />
+                                                    <div class="col-2">
+                                                        <div style="margin-top: 15px;"><span style="
+                                                            border-radius: 50%;
+                                                            width: 200px !important;
+                                                            height: 200px; 
+                                                            background-color: {{ color }};
+                                                            color: {{ color }};
+                                                        ">&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
                                                     </div>
                                                     <div class="col-4">
-                                                        <p>{% translate 'Identified' %}</p>
+                                                        <p>{{ step }}</p>
                                                     </div>
-                                                    <div class="col-4">
+                                                    <div class="col-6">
                                                         <span>Savenes: - </span><br />
                                                         <span>Kara: - </span><br />
                                                         <span>Centrale: - </span>
@@ -52,78 +60,8 @@
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="row carte-legend">
-                                                    <div class="col-4">
-                                                        <img src="{% static 'images/no_approve.png' %}" width="50" height="60" />
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <p>{% translate 'No approve' %}
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <span>Savenes: - </span><br />
-                                                        <span>Kara: - </span><br />
-                                                        <span>Centrale: - </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="row carte-legend">
-                                                    <div class="col-4">
-                                                        <img src="{% static 'images/in_progress.png' %}" width="50" height="60" />
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <p>{% translate 'In progress' %}</p>
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <span>Savenes: - </span><br />
-                                                        <span>Kara: - </span><br />
-                                                        <span>Centrale: - </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="row carte-legend">
-                                                    <div class="col-4">
-                                                        <img src="{% static 'images/interrupted.png' %}" width="50" height="60" />
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <p>{% translate 'Interrupted' %}</p>
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <span>Savenes: - </span><br />
-                                                        <span>Kara: - </span><br />
-                                                        <span>Centrale: - </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="row carte-legend">
-                                                    <div class="col-4">
-                                                        <img src="{% static 'images/completed.png' %}" width="50" height="60" />
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <p>{% translate 'Completed' %}</p>
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <span>Savenes: - </span><br />
-                                                        <span>Kara: - </span><br />
-                                                        <span>Centrale: - </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        {% endfor %}
+                                        
 
                                         <div class="card">
                                             <div class="card-body">
@@ -140,11 +78,14 @@
 
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-8">
+                            </div> {% endcomment %}
+                            <div class="col-12">
                                 <div class="card">
-                                    <div class="card-body" style="height: 1300px;">
+                                    {% comment %} <div class="card-body" style="height: 1300px;">
                                         <div id="map" style="height: 1700px !important;"></div>
+                                    </div> {% endcomment %}
+                                    <div class="card-body" style="">
+                                        <div id="map" style=""></div>
                                     </div>
                                 </div>
                             </div>
@@ -161,6 +102,59 @@
     </div>
 
 {% endblock %}
+
+
+
+{% block modals %}
+<div class="modal fade" id="map-legen" tabindex="-1" role="dialog" aria-labelledby="map-legenLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="map-legenLabel">{% translate 'Legend' %}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        
+        {% for step, color in types_of_sub_project_color.items %}
+            <div class="card">
+                <div class="card-body">
+                    <div class="row carte-legend">
+                        <div class="col-2">
+                            <div style="margin-top: 15px;"><span style="
+                                border-radius: 50%;
+                                width: 200px !important;
+                                height: 200px; 
+                                background-color: {{ color }};
+                                color: {{ color }};
+                            ">&nbsp;&nbsp;&nbsp;&nbsp;</span></div>
+                        </div>
+                        <div class="col-4">
+                            <p>{{ step }}</p>
+                        </div>
+                        <div class="col-6">
+                            <span>Savenes: - </span><br />
+                            <span>Kara: - </span><br />
+                            <span>Centrale: - </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">{% translate 'Close' %}</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+
+
+
 {% block javascript %}
     {{ block.super }}
     <script src="{% static 'plugins/mapbox-gl-js/v2.6.1/mapbox-gl.js' %}"></script>
@@ -168,6 +162,7 @@
         let statistics_spin = $('#statistics-spin');
         let markers = [];
         let marker;
+        let a;
 
         mapboxgl.accessToken = '{{ access_token }}';
         if (!mapboxgl.supported()) {
@@ -215,41 +210,83 @@
                 statistics_spin.hide();
             }, 1000);
         });
-        //#ffa500
-        //#ff0000 #b40219
-        //#0000ff
-        //#000000
-        //#008200
-        {% comment %} marker = new mapboxgl.Marker({ "color": "#ffa500" })
-                    .setLngLat([1.176201, 9.547689])
-                    .setPopup( // add pop out to map
-      new mapboxgl.Popup({ offset: 25 }).setHTML(
-        `<br />
-        <p><b>${"hhhhhhhhhhh"}</b></p>
-        <a href="#!"><b>${"hhhhhhhhhhh"}</b></a>
-        `
-      )
-    )
-                    .addTo(map);
-                markers.push(marker);  {% endcomment %}
+        
         {% for subproject in subprojects %}
             {% if subproject.latitude and subproject.longitude %}
                 {% if subproject.location_subproject_realized %}
-                    marker = new mapboxgl.Marker()
-                        .setLngLat([{{ subproject.longitude }}, {{ subproject.latitude }}])
+
+                    marker = new mapboxgl.Marker({
+                            scale: 0.35, 
+                            "color": "{{ subproject.type_of_subproject|get_type_sub_project_color }}"
+                        })
+                        .setLngLat(
+                            [
+                                parseFloat('{{ subproject.longitude }}'.replace(',', '.')), 
+                                parseFloat('{{ subproject.latitude }}'.replace(',', '.'))
+                            ]
+                        )
                         .setPopup(
-                            new mapboxgl.Popup({ offset: 25 }).setHTML(
+                            new mapboxgl.Popup().setHTML(
                                 `<br />
-                                <a target="_blank" href="{% url 'administrativelevels:detail' subproject.location_subproject_realized.pk %}?type=Village"><b>{{ subproject.location_subproject_realized.name }}</b></a>
+                                <a target="_blank" href="{% url 'administrativelevels:detail' subproject.location_subproject_realized.pk %}?type=Village"><b>{{ subproject.location_subproject_realized.name }}</b></a><br />
                                 <a target="_blank" href="{% url 'subprojects:detail' subproject.pk %}"><b>{{ subproject.full_title_of_approved_subproject }}</b></a>
+                                
+                                
+                                <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                                    <ol class="carousel-indicators">
+                                        {% for img in subproject.get_all_images %}
+                                        <li data-target="#carouselExampleIndicators" data-slide-to="{{ forloop.counter }}" {% if img.principal %}class="active"{% endif %} ></li>
+                                        {% endfor %}
+                                    </ol>
+                                    <div class="carousel-inner">
+                                        
+                                        {% for img in subproject.get_all_images %}
+
+                                            <div class="carousel-item {% if img.principal %}active{% endif %}">
+                                                            
+                                                
+                                                <a target="_blank" href="{{ img.url|imgAWSS3Filter }}">
+                                                    <img class="d-block w-100" src="{{ img.url|imgAWSS3Filter }}" alt="{{ img.name }}">
+                                                </a>
+                                                <div class="carousel-caption d-none d-md-block">
+                                                    <div style="margin-top: -370px !important;">
+                                                        <h5>{{ img.name }}</h5>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+                                        {% endfor %}
+
+
+                                    </div>
+                                    <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Previous</span>
+                                    </a>
+                                    <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                        <span class="sr-only">Next</span>
+                                    </a>
+                                </div>
+                                
+                                
                                 `
                             )
                         )
                         .addTo(map);
                     markers.push(marker);
                 {% elif subproject.canton %}
-                    marker = new mapboxgl.Marker()
-                        .setLngLat([{{ subproject.longitude }}, {{ subproject.latitude }}])
+                    marker = new mapboxgl.Marker({ 
+                            scale: 0.35, 
+                            "color": "{{ subproject.type_of_subproject|get_type_sub_project_color }}" 
+                        })
+                        .setLngLat(
+                            [
+                                parseFloat('{{ subproject.longitude }}'.replace(',', '.')), 
+                                parseFloat('{{ subproject.latitude }}'.replace(',', '.'))
+                            ]
+                        )
                         .setPopup(
                             new mapboxgl.Popup({ offset: 25 }).setHTML(
                                 `<br />

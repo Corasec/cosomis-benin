@@ -62,6 +62,13 @@ CREATED_APPS = [
     "administrativelevels",
     "unicorn",
     "kobotoolbox",
+    "authentication",
+    "assignments",
+    "dashboard",
+    "custom_file",
+    "attachments",
+    "process_manager",
+    # 'financial',
 ]
 
 THIRD_PARTY_APPS = [
@@ -174,6 +181,16 @@ NO_SQL_PASS = env("NO_SQL_PASS")
 
 NO_SQL_URL = env("NO_SQL_URL")
 
+COUCHDB_DATABASE = env("COUCHDB_DATABASE")
+
+COUCHDB_DATABASE_ADMINISTRATIVE_LEVEL = env("COUCHDB_DATABASE_ADMINISTRATIVE_LEVEL")
+
+COUCHDB_ATTACHMENT_DATABASE = env("COUCHDB_ATTACHMENT_DATABASE")
+
+COUCHDB_GRM_DATABASE = env("COUCHDB_GRM_DATABASE")
+
+COUCHDB_GRM_ATTACHMENT_DATABASE = env("COUCHDB_GRM_ATTACHMENT_DATABASE")
+
 
 # S3
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
@@ -189,3 +206,11 @@ REST_FRAMEWORK = {
     # https://github.com/tfranzel/drf-spectacular
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+MAX_UPLOAD_SIZE = 5 * 1024 * 1024  # 5MB
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50 MB, adjust as needed
+FILE_UPLOAD_MAX_MEMORY_SIZE = 52428800  # 50 MB, adjust as needed

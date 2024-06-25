@@ -8,7 +8,7 @@ import time
 import json
 from django.http import HttpResponse
 
-from subprojects.models import Subproject, SubprojectImage
+from subprojects.models import Subproject, SubprojectFile, SubprojectStep, Level
 
 
 class UploadSuprojectImageView(LoginRequiredMixin, generic.View):
@@ -49,7 +49,7 @@ class UploadSuprojectImageView(LoginRequiredMixin, generic.View):
         if object_id and file and date_taken and order and name:
             file_directory_within_bucket = "proof_of_work/"
             file_path_within_bucket = os.path.join(
-                file_directory_within_bucket, file.name + str(time.time())
+                file_directory_within_bucket, f"{str(time.time())}-{file.name}"
             )
 
             media_storage = S3Boto3Storage()
@@ -69,13 +69,15 @@ class UploadSuprojectImageView(LoginRequiredMixin, generic.View):
                     if len(images) == 0:
                         principal = True
 
-                image = SubprojectImage()
+                image = SubprojectFile()
                 image.url = file_url
                 image.subproject = subproject
                 image.principal = principal
                 image.order = order
                 image.date_taken = date_taken
                 image.name = name
+                image.file_type = file.content_type
+
                 image.save()
 
                 return HttpResponse(
@@ -106,7 +108,7 @@ class UpdateSuprojectImageView(LoginRequiredMixin, generic.View):
         subproject = None
         _ok = True
 
-        image = SubprojectImage.objects.get(id=image_id)
+        image = SubprojectFile.objects.get(id=image_id)
 
         subproject = Subproject.objects.get(id=object_id)
         images = subproject.get_all_images()
@@ -140,6 +142,7 @@ class UpdateSuprojectImageView(LoginRequiredMixin, generic.View):
                     principal = True
 
             image.subproject = subproject
+
             image.principal = principal
             image.order = order
             if date_taken:

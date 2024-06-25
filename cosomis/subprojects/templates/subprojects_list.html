@@ -19,7 +19,7 @@
                             <div class="input-group-prepend">
                                 <span class="input-group-text"><i class="fas fa-search"></i></span>
                             </div>
-                            <input class="form-control" name="search" placeholder="{% translate 'Search in database' %}...">
+                            <input class="form-control" name="search" value="{% if search %}{{ search }}{% endif %}" placeholder="{% translate 'Search in database' %}...">
                             <input class="btn btn-primary" type="submit" value="{% translate 'Search' %}">
                         </form>
                     </div>
@@ -34,15 +34,19 @@
             <div class="card">
                 <div class="card-header">
                     <div class="col-md-12">
-                        {% if user.is_superuser or user|has_group:"Admin" %}
+                        {% if user.is_superuser or user|has_group:"Admin" or user|has_group:"Evaluator" %}
                         <div class="btn-group pull-left">
                             <a class="btn btn-primary" href="{% url 'subprojects:create' %}">{% translate 'Create' %}</a>
+                            {% if user.is_superuser or user|has_group:"Admin" %}
                             &nbsp; &nbsp; &nbsp; &nbsp; 
                             {% include 'components/modal_upload_one_sheet.html' with type_object="subproject_new" show_just_villages=False %}
+                            {% endif %}
                         </div>
                         {% endif %}
                         <div class="btn-group pull-right">
                             {% include 'components/download_subprojects.html' %}
+                            <div> &nbsp; &nbsp; </div>
+                            <a class="btn btn-primary" href="{% url 'subprojects:display_grouped:display_grouped_dashboard' %}">{% translate 'Display grouped' %}</a>
                             <div> &nbsp; &nbsp; </div>
                             <a class="btn btn-primary" href="{% url 'subprojects:map' %}">{% translate 'Map View' %}</a>
                         </div>
@@ -52,10 +56,14 @@
                     <table id="table" class="table">
                         <thead>
                         <tr>
-                            <th>{% translate 'Village' %}</th>
-                            <th>{% translate 'Canton' %}</th>
+                            <th>{% translate 'N°' %}</th>
+                            {% comment %} <th>{% translate 'Village' %}</th>
+                            <th>{% translate 'Canton' %}</th> {% endcomment %}
+                            <th>{% translate 'Sites' %}</th>
                             <th>{% translate 'Region' %}</th>
                             <th>{% translate 'Project Name' %}</th>
+                            <th>{% translate 'Type' %}</th>
+                            <th>{% translate 'Status' %}</th>
                             <th>{% translate 'Allocation' %} CFA</th>
                             <th width="12%">{% translate 'Action' %}</th>
                         </tr>
@@ -63,17 +71,33 @@
                         <tbody>
                         {% for subproject in subprojects %}
                             <tr>
-                                <td>{{ subproject.get_village.name }}</td>
-                                <td>{{ subproject.get_cantons_names }}</td>
+                                <td>N{{ subproject.number }}.{{ subproject.joint_subproject_number }}</td>
+                                {% comment %} <td>{{ subproject.get_village.name }}</td>
+                                <td>{{ subproject.get_cantons_names }}</td> {% endcomment %}
+                                <td>
+                                    {% if '/' in subproject.get_cantons_names %}
+                                        {{ subproject.get_cantons_names }}
+                                    {% else %}
+                                        {{ subproject.get_village.name }}
+                                    {% endif %}
+                                </td>
                                 <td>{{ subproject.get_canton.parent.parent.parent.name }}</td>
                                 <td>{{ subproject.full_title_of_approved_subproject }}</td>
+                                <td>{{ subproject.type_of_subproject }}</td>
+                                <td>
+                                    {% if subproject.get_current_subproject_step_and_level %}
+                                        {{ subproject.get_current_subproject_step_and_level }}
+                                    {% else %}
+                                        {% translate 'No start' %}
+                                    {% endif %}
+                                </td>
                                 <td>{{ subproject.get_estimated_cost_str }}</td>
                                 <td>
                                     <a href="{% url 'subprojects:detail' subproject.pk %}" style="font-size: 9px !important;"
                                        class="btn btn-primary btn-xs" title="{% translate 'View details' %}">
                                         <i class="fa fa-eye"></i>
                                     </a>
-                                    {% if user.is_superuser or user|has_group:"Admin" %}
+                                    {% if user.is_superuser or user|has_group:"Admin" or user|has_group:"Evaluator" or user|has_group:"Infra" %}
                                     <a href="{% url 'subprojects:update' subproject.pk %}" style="font-size: 9px !important;"
                                        class="btn btn-primary btn-xs" title="{% translate 'Edit' %}">
                                         <i class="fa fa-edit"></i>
@@ -83,9 +107,28 @@
                             </tr>
                         {% endfor %}
                         </tbody>
-                    </table>
-                    <b>{{ total_without_link }}/{{ total }} {% translate 'Subprojects' %}</b>
+                        
+                        <tfoot>
+                            <tr>
+                                <th rowspan="1" colspan="1"></th>
+                                <th rowspan="1" colspan="1"></th>
+                                <th rowspan="1" colspan="1"></th>
+                                <th rowspan="1" colspan="1"></th>
+                                <th rowspan="1" colspan="1"></th>
+                                <th rowspan="1" colspan="1"></th>
+                                <th rowspan="1" colspan="1"></th>
+                            </tr>
+                        </tfoot>
 
+                    </table>
+                    {% comment %} <b>{{ total_without_link }}/{{ total }} {% translate 'Subprojects' %}</b> {% endcomment %}
+                    
+                    <b>{{ total_subproject }} ==> {% translate 'Total number of Subprojects' %}</b><br />
+                    <b>{{ total }} ==> {% translate 'Total number of structures/infrastructures without latrines and fences' %}</b><br />
+                    <b>{{ total_infrastrutures }} ==> {% translate 'Total number of structures/infrastructures' %}</b><br />
+                    <b>{{ total_latrine_blocks }} ==> {% translate 'Total latrines' %}</b><br />
+                    <b>{{ total_fences }} ==> {% translate 'Total fences' %}</b><br />
+                    {% comment %} <b>{{ total_without_link }} ==> {% translate 'No duplication of ongoing sub-projects (such as (tracks, electrification, etc.) in several cantons)' %}</b><br /> {% endcomment %}
                     
 
                     <nav>
@@ -132,16 +175,41 @@
                     url: '{% static 'AdminLTE/plugins/datatables/locale/lang.json' %}'.replace('lang', '{{ lang }}')
                 },
                 dom: "ltipr",
+                initComplete: function () {
+                    this.api()
+                        .columns()
+                        .every(function () {
+                            var column = this;
+                            
+                            // Create select element and listener
+                            var select = $('<select style="width:50px !important;"><option value=""></option></select>')
+                                .appendTo($(column.footer()).empty())
+                                .on('change', function () {
+                                    var val = $(`#table`).DataTable.util.escapeRegex($(this).val());
+            
+                                    column.search(val ? '^' + val + '$' : '', true, false).draw();
+                                });
+            
+                            // Add list of options
+                            column
+                                .data()
+                                .unique()
+                                .sort()
+                                .each(function (d, j) {
+                                    select.append('<option value="' + d + '">' + d + '</option>');
+                                });
+                        });
+                },
                 columnDefs: [
-                    {
+                    {% comment %} {
                         targets: 1,
                         orderable: false,
                         searchable: false,
-                    }
+                    } {% endcomment %}
                 ],
                 lengthMenu: [10, 50, 100],
                 pageLength: 10,
-                order: [[0, 'desc']]
+                order: []//[[0, 'desc']]
             });
             $('#search').on('keyup', function () {
                 table.search($(this).val()).draw();
