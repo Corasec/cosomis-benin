@@ -488,14 +488,14 @@ class Subproject(BaseModel):
         cantons_names = self.get_cantons_names()
         canton = self.get_canton()
         location = ""
-        if canton:
-            location = (
-                canton.parent.parent.parent.name
-                + ", "
-                + canton.parent.parent.name
-                + ", "
-                + canton.parent.name
-            )
+        # if canton:
+        #     location = (
+        #         canton.parent.parent.parent.name
+        #         + ", "
+        #         + canton.parent.parent.name
+        #         + ", "
+        #         + canton.parent.name
+        #     )
 
         return location
 

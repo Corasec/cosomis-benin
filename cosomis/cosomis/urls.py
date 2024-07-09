@@ -42,10 +42,10 @@ urlpatterns += i18n_patterns(
     path("unicorn/", include("django_unicorn.urls")),
     path("kobotoolbox/", include("kobotoolbox.urls")),
     path("services/", include("administrativelevels.libraries.services.urls")),
-    # path('dashboard/', include('dashboard.urls')),
-    # path('financial/', include('financial.urls')),
-    # path('custom-file/', include('custom_file.urls')),
-    # path('delete-object/<int:object_id>/<str:type>/', views.DeleteObjectFormView.as_view(), name='object_deletion_form'),
+    path('dashboard/', include('dashboard.urls')),
+    path('financial/', include('financial.urls')),
+    path('custom-file/', include('custom_file.urls')),
+    path('delete-object/<int:object_id>/<str:type>/', views.DeleteObjectFormView.as_view(), name='object_deletion_form'),
 )
 
 
