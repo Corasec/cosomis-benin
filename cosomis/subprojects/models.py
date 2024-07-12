@@ -481,11 +481,21 @@ class Subproject(BaseModel):
         location = ""
         if canton:
             location = (
-                (canton.parent.parent.parent.name if canton.parent and canton.parent.parent and canton.parent.parent.parent else '')
+                (
+                    canton.parent.parent.parent.name
+                    if canton.parent
+                    and canton.parent.parent
+                    and canton.parent.parent.parent
+                    else ""
+                )
                 + ", "
-                + (canton.parent.parent.name if canton.parent and canton.parent.parent else '')
+                + (
+                    canton.parent.parent.name
+                    if canton.parent and canton.parent.parent
+                    else ""
+                )
                 + ", "
-                + (canton.parent.name if canton.parent else '')
+                + (canton.parent.name if canton.parent else "")
             )
         if cantons_names:
             location += ", " + cantons_names
@@ -537,16 +547,17 @@ class Subproject(BaseModel):
     def get_estimated_cost_str(self):
         locale.setlocale(locale.LC_ALL, "")
         estimated_cost_str = ""
-        if self.estimated_cost :
+        if self.estimated_cost:
             estimated_cost_str += locale.currency(
                 self.estimated_cost, grouping=True
             ).__str__()
             subproject_link_objects = self.get_all_subprojects_linked()
             if subproject_link_objects:
                 for o in subproject_link_objects:
-                    if o.estimated_cost :
+                    if o.estimated_cost:
                         estimated_cost_str += (
-                            " + " + locale.currency(o.estimated_cost, grouping=True).__str__()
+                            " + "
+                            + locale.currency(o.estimated_cost, grouping=True).__str__()
                         )
                 return (
                     locale.currency(self.get_estimated_cost(), grouping=True).__str__()

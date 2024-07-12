@@ -189,7 +189,9 @@ class CVD(BaseModel):
 
 class AssignedTo(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    administrative_level = models.ForeignKey(AdministrativeLevel, null=True, on_delete=models.CASCADE)
+    administrative_level = models.ForeignKey(
+        AdministrativeLevel, null=True, on_delete=models.CASCADE
+    )
     cvd = models.ForeignKey(CVD, null=True, on_delete=models.CASCADE)
 
 

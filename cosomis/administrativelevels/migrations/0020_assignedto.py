@@ -6,8 +6,8 @@ import django.db.models.deletion
 
 
 def create_technical_facilitator_group(apps, schema_editor):
-    Group = apps.get_model('auth', 'Group')
-    group, created = Group.objects.get_or_create(name='technical_facilitator')
+    Group = apps.get_model("auth", "Group")
+    group, created = Group.objects.get_or_create(name="technical_facilitator")
     if created:
         print('Group "technical_facilitator" created successfully!')
     else:

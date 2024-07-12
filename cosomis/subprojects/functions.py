@@ -1555,6 +1555,7 @@ def get_subprojects_under_file_excel_or_csv(
     else:
         return file_path
 
+
 def load_subprojects_from_excel(file_path):
     """
     Load data from an Excel file into the Subproject model.
@@ -1564,18 +1565,26 @@ def load_subprojects_from_excel(file_path):
     count = 0
     for index, row in df.iterrows():
         try:
-            location_subproject_realized_qs = AdministrativeLevel.objects.filter(name=row['Village'].upper(), type="village")
+            location_subproject_realized_qs = AdministrativeLevel.objects.filter(
+                name=row["Village"].upper(), type="village"
+            )
             if location_subproject_realized_qs.count() != 1:
-                raise ValueError(f"Expected exactly one AdministrativeLevel for '{row['Village']}' at line {index + 2}, found {location_subproject_realized_qs.count()}")
+                raise ValueError(
+                    f"Expected exactly one AdministrativeLevel for '{row['Village']}' at line {index + 2}, found {location_subproject_realized_qs.count()}"
+                )
             location_subproject_realized = location_subproject_realized_qs.first()
         except AdministrativeLevel.DoesNotExist:
-            raise ValueError(f"AdministrativeLevel not found for '{row['Village']}' at line {index + 2}")
+            raise ValueError(
+                f"AdministrativeLevel not found for '{row['Village']}' at line {index + 2}"
+            )
 
         try:
             component_name = f"Sous-composante {row['Sous-composante']}"
             component = Component.objects.get(name=component_name)
         except Component.DoesNotExist:
-            raise ValueError(f"Component not found for '{row['Sous-composante']}' at line {index + 2}")
+            raise ValueError(
+                f"Component not found for '{row['Sous-composante']}' at line {index + 2}"
+            )
         # view data
         # data =  {
         #             "location_subproject_realized" : location_subproject_realized,
@@ -1590,18 +1599,18 @@ def load_subprojects_from_excel(file_path):
         # count+=1
         # print (f" Data{count} : {data}")
         if not Subproject.objects.filter(
-                location_subproject_realized=location_subproject_realized,
-                full_title_of_approved_subproject=row['Intitulé du sous projet']
+            location_subproject_realized=location_subproject_realized,
+            full_title_of_approved_subproject=row["Intitulé du sous projet"],
         ).exists():
             Subproject.objects.create(
                 location_subproject_realized=location_subproject_realized,
-                full_title_of_approved_subproject=row['Intitulé du sous projet'],
-                comments=row['Description du projet'],
-                subproject_sector=row['Sous-secteur d\'activité'],
+                full_title_of_approved_subproject=row["Intitulé du sous projet"],
+                comments=row["Description du projet"],
+                subproject_sector=row["Sous-secteur d'activité"],
                 component=component,
-                subproject_type_designation=row['Type de sous-projet'],
-                estimated_cost=row['Coût prévisionnel'],
-                project_management=row['Maîtrise d\'ouvrage'],
+                subproject_type_designation=row["Type de sous-projet"],
+                estimated_cost=row["Coût prévisionnel"],
+                project_management=row["Maîtrise d'ouvrage"],
             )
-            count+=1
+            count += 1
     print(f"{count} datas loaded successfully")
