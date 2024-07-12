@@ -5,6 +5,10 @@ SUB_PROJECT_TYPE_DESIGNATION = (
     ("Infrastructure", _("Infrastructure")),
 )
 
+PROJECT_MANAGEMENT_TYPE = (
+    ("MOC", _("MOC")),
+    ("MODC", _("MODC")),
+)
 
 SUB_PROJECT_SECTORS = (
     ("", ""),

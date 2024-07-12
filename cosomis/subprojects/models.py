@@ -6,7 +6,7 @@ from django.db.models.signals import post_save
 from django.db.models import Q
 from administrativelevels.models import AdministrativeLevel, CVD
 from cosomis.models_base import BaseModel
-from subprojects import SUB_PROJECT_TYPE_DESIGNATION
+from subprojects import SUB_PROJECT_TYPE_DESIGNATION, PROJECT_MANAGEMENT_TYPE
 from cosomis.customers_fields import *
 from cosomis.types import _QS
 
@@ -408,6 +408,15 @@ class Subproject(BaseModel):
         null=True, blank=True, verbose_name=_("Infrastructure deleted?")
     )
 
+    project_management = models.CharField(
+        max_length=100,
+        choices=PROJECT_MANAGEMENT_TYPE,
+        default="",
+        verbose_name=_("Project management"),
+        null=True,
+        blank=True,
+    )
+
     objects = CustomQuerySet.as_manager()
 
     class Meta:
@@ -472,11 +481,11 @@ class Subproject(BaseModel):
         location = ""
         if canton:
             location = (
-                canton.parent.parent.parent.name
+                (canton.parent.parent.parent.name if canton.parent and canton.parent.parent and canton.parent.parent.parent else '')
                 + ", "
-                + canton.parent.parent.name
+                + (canton.parent.parent.name if canton.parent and canton.parent.parent else '')
                 + ", "
-                + canton.parent.name
+                + (canton.parent.name if canton.parent else '')
             )
         if cantons_names:
             location += ", " + cantons_names
@@ -528,19 +537,21 @@ class Subproject(BaseModel):
     def get_estimated_cost_str(self):
         locale.setlocale(locale.LC_ALL, "")
         estimated_cost_str = ""
-        estimated_cost_str += locale.currency(
-            self.estimated_cost, grouping=True
-        ).__str__()
-        subproject_link_objects = self.get_all_subprojects_linked()
-        if subproject_link_objects:
-            for o in subproject_link_objects:
-                estimated_cost_str += (
-                    " + " + locale.currency(o.estimated_cost, grouping=True).__str__()
-                )
-            return (
-                locale.currency(self.get_estimated_cost(), grouping=True).__str__()
-                + f" ({estimated_cost_str})"
-            ).replace("$", "")
+        if self.estimated_cost :
+            estimated_cost_str += locale.currency(
+                self.estimated_cost, grouping=True
+            ).__str__()
+            subproject_link_objects = self.get_all_subprojects_linked()
+            if subproject_link_objects:
+                for o in subproject_link_objects:
+                    if o.estimated_cost :
+                        estimated_cost_str += (
+                            " + " + locale.currency(o.estimated_cost, grouping=True).__str__()
+                        )
+                return (
+                    locale.currency(self.get_estimated_cost(), grouping=True).__str__()
+                    + f" ({estimated_cost_str})"
+                ).replace("$", "")
 
         return estimated_cost_str.replace("$", "")
 
