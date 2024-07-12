@@ -5,6 +5,7 @@ from django.db.models.signals import post_save, post_delete
 from cosomis.constants import ADMINISTRATIVE_LEVEL_TYPE
 from cosomis.models_base import BaseModel
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.models import User
 
 
 class AdministrativeLevel(BaseModel):
@@ -184,6 +185,12 @@ class CVD(BaseModel):
 
     def __str__(self):
         return self.get_name()
+
+
+class AssignedTo(BaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    administrative_level = models.ForeignKey(AdministrativeLevel, null=True, on_delete=models.CASCADE)
+    cvd = models.ForeignKey(CVD, null=True, on_delete=models.CASCADE)
 
 
 def update_or_create_amd_couch(sender, instance, **kwargs):
