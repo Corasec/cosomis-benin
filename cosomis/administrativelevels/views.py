@@ -31,6 +31,7 @@ from usermanager.permissions import (
 from cosomis.constants import ADMINISTRATIVE_LEVEL_TYPE
 from administrativelevels.functions import get_administrative_level_ids_descendants
 from administrativelevels import functions_cvd as cvd_functions
+from cosomis.mixins import CustomLoginRequiredMixin, TechnicalFacilitatorAccessMixin
 
 
 SEARCH_PLACEHOLDER = "Rechercher"
@@ -57,7 +58,7 @@ class VillageDetailView(PageMixin, LoginRequiredMixin, DetailView):
         raise Http404
 
 
-class AdministrativeLevelDetailView(PageMixin, LoginRequiredMixin, DetailView):
+class AdministrativeLevelDetailView(PageMixin, CustomLoginRequiredMixin, DetailView):
     """Class to present the detail page of one village"""
 
     model = AdministrativeLevel
