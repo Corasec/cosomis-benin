@@ -63,7 +63,7 @@
                             <span class="font-weight-bold">{% translate 'Location' %}: </span>
                             {% if object.location_subproject_realized %}
                                 <a style="color: #599cf7 !important;" target="_blank" 
-                                    href="{% url 'administrativelevels:village_detail' object.location_subproject_realized.pk %}" >
+                                    href="{% url 'administrativelevels:detail' object.location_subproject_realized.pk %}" >
                                     {{ object.get_location }}
                                 </a>
                             {% else %}
@@ -82,7 +82,7 @@
                                 </span>
                             {% endif %}
                         </div>
-
+{% comment %} 
                         {% if object.location_subproject_realized %}
                         <div class="clearfix pb-1">
                             <span class="font-weight-bold">{% translate 'CVD' %}: </span>
@@ -100,7 +100,7 @@
                                 )
                             </span>
                         </div>
-                        {% endif %}
+                        {% endif %} {% endcomment %}
 
                         <div class="clearfix pb-1">
                             <span class="font-weight-bold">{% translate 'Sector' %}: </span><span>{{ object.subproject_sector }}</span>
