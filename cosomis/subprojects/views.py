@@ -84,16 +84,23 @@ class SubprojectsListView(PageMixin, LoginRequiredMixin, generic.ListView):
         {"url": "", "title": title},
     ]
 
-    # def get_queryset(self):
-    #     # return super().get_queryset()
-    #     return Subproject.objects.filter(link_to_subproject=None).get_actifs()
     def get_queryset(self):
         search = self.request.GET.get("search", None)
         page_number = self.request.GET.get("page", None)
+        user = self.request.user
+        subprojects_list = Subproject.objects.filter(
+            link_to_subproject=None
+        ).get_actifs()
+        if user.groups.filter(name="technical_facilitator").exists():
+            subprojects_list = subprojects_list.filter(
+                facilitator_name=f"{user.last_name} {user.first_name}"
+            )
+
         if search:
             if search == "All":
-                gs = Subproject.objects.filter(link_to_subproject=None).get_actifs()
-                return Paginator(gs, gs.count()).get_page(page_number)
+                return Paginator(subprojects_list, subprojects_list.count()).get_page(
+                    page_number
+                )
             search = search.upper()
             return Paginator(
                 Subproject.objects.filter(
@@ -119,9 +126,7 @@ class SubprojectsListView(PageMixin, LoginRequiredMixin, generic.ListView):
                 100,
             ).get_page(page_number)
         else:
-            return Paginator(
-                Subproject.objects.filter(link_to_subproject=None).get_actifs(), 100
-            ).get_page(page_number)
+            return Paginator(subprojects_list, 100).get_page(page_number)
 
     def get_context_data(self, **kwargs):
         ctx = super(SubprojectsListView, self).get_context_data(**kwargs)
@@ -184,7 +189,7 @@ class SubprojectsMapViewPage(generic.TemplateView):
             template=self.get_template_names(),
             context=context,
             using=self.template_engine,
-            **response_kwargs
+            **response_kwargs,
         )
 
 

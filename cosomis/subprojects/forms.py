@@ -111,7 +111,11 @@ class VulnerableGroupForm(forms.ModelForm):
 # Add
 class SubprojectAddStepForm(forms.ModelForm):
     begin = forms.DateField(
-        label=_("Begin"), input_formats=["%d/%m/%Y"], help_text="DD/MM/YYYY"
+        label=_("Begin"),
+        widget=forms.DateInput(
+            format="%d/%m/%Y", attrs={"class": "form-control", "type": "date"}
+        ),
+        help_text="DD/MM/YYYY",
     )
     # end = forms.DateField(label=_('End'), input_formats=['%d/%m/%Y'],
     #                                   help_text="DD/MM/YYYY", required=False)
@@ -125,10 +129,10 @@ class SubprojectAddStepForm(forms.ModelForm):
         # doc_id = initial.get('doc_id')
         super().__init__(*args, **kwargs)
         for label, field in self.fields.items():
-            if label in ("begin", "end"):
-                self.fields[label].widget.attrs[
-                    "class"
-                ] = "form-control datetimepicker-input"
+            # if label in ("begin", "end"):
+            #     self.fields[label].widget.attrs[
+            #         "class"
+            #     ] = "form-control datetimepicker-input"
 
             if label == "step":
                 self.fields[label].queryset = Step.objects.all().order_by("ranking")

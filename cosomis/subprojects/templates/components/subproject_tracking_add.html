@@ -5,7 +5,7 @@
 
 
 
-    {% if user.is_superuser or user|has_group:"Admin" or user|has_group:"Evaluator" or user|has_group:"Infra" %}
+    {% if user.is_superuser or user|has_group:"Admin" or user|has_group:"Evaluator" or user|has_group:"Infra" or user|has_group:"technical_facilitator" %}
     <button type="button" class="font-weight-bold" id="add_subproject_tracking_step">
         <i class="fas fa-plus"></i> {% translate 'step' %}
     </button>
@@ -54,7 +54,7 @@
                     {% if subproject_step.description %}{{ subproject_step.description }}{% endif %}
                 </p>
                 {% if subproject_step.step.has_levels %}
-                    {% if user.is_superuser or user|has_group:"Admin" or user|has_group:"Evaluator" or user|has_group:"Infra" %}
+                    {% if user.is_superuser or user|has_group:"Admin" or user|has_group:"Evaluator" or user|has_group:"Infra" or user|has_group:"technical_facilitator" %}
                     <button type="button" class="add_evolution_level" 
                         id="add_evolution_level_{{ subproject_step.id }}">
                         <i class="fas fa-plus"></i> {% translate "level" %}

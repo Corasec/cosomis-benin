@@ -330,6 +330,9 @@ class InfraPermissionRequiredMixin(UserPassesTestMixin):
                     self.request.user.groups.filter(name="Infra").exists()
                     or self.request.user.groups.filter(name="Evaluator").exists()
                     or self.request.user.groups.filter(name="Admin").exists()
+                    or self.request.user.groups.filter(
+                        name="technical_facilitator"
+                    ).exists()
                     or bool(self.request.user.is_superuser)
                 )
             )

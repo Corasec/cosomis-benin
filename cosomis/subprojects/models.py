@@ -475,7 +475,14 @@ class Subproject(BaseModel):
     def get_villages_str(self):
         return ", ".join([o.name for o in self.get_villages()])
 
-    def get_location(self):
+    @property
+    def get_beneficiary_villages(self):
+        beneficiary_villages_qs = self.list_of_beneficiary_villages.all().values_list(
+            "name", flat=True
+        )
+        return ", ".join(beneficiary_villages_qs)
+
+    def get_location_old_tg(self):
         cantons_names = self.get_cantons_names()
         canton = self.get_canton()
         location = ""
@@ -501,6 +508,10 @@ class Subproject(BaseModel):
             location += ", " + cantons_names
         if self.location_subproject_realized:
             location += ", " + self.location_subproject_realized.name
+        return location
+
+    def get_location(self):
+        location = f"{self.location_subproject_realized.parent.parent}, {self.location_subproject_realized.parent}, {self.location_subproject_realized}, ({self.get_beneficiary_villages})"
         return location
 
     def get_location_commune(self):

@@ -37,7 +37,7 @@ from cosomis.mixins import CustomLoginRequiredMixin, TechnicalFacilitatorAccessM
 SEARCH_PLACEHOLDER = "Rechercher"
 
 
-class VillageDetailView(PageMixin, LoginRequiredMixin, DetailView):
+class VillageDetailView(PageMixin, CustomLoginRequiredMixin, DetailView):
     """Class to present the detail page of one village"""
 
     model = AdministrativeLevel
@@ -82,7 +82,7 @@ class AdministrativeLevelDetailView(PageMixin, CustomLoginRequiredMixin, DetailV
 
 
 class AdministrativeLevelCreateView(
-    PageMixin, LoginRequiredMixin, AdminPermissionRequiredMixin, CreateView
+    PageMixin, CustomLoginRequiredMixin, AdminPermissionRequiredMixin, CreateView
 ):
     model = AdministrativeLevel
     template_name = "administrativelevel_create.html"
@@ -125,7 +125,7 @@ class AdministrativeLevelCreateView(
 
 
 class AdministrativeLevelUpdateView(
-    PageMixin, LoginRequiredMixin, AdminPermissionRequiredMixin, UpdateView
+    PageMixin, CustomLoginRequiredMixin, AdminPermissionRequiredMixin, UpdateView
 ):
     model = AdministrativeLevel
     template_name = "administrativelevel_create.html"
@@ -171,7 +171,7 @@ class AdministrativeLevelUpdateView(
 
 
 class UploadCSVView(
-    PageMixin, LoginRequiredMixin, AdminPermissionRequiredMixin, TemplateView
+    PageMixin, CustomLoginRequiredMixin, AdminPermissionRequiredMixin, TemplateView
 ):
     """Class to upload and save the administrativelevels"""
 
@@ -294,7 +294,7 @@ class UploadCSVView(
         return context
 
 
-class DownloadCSVView(PageMixin, LoginRequiredMixin, TemplateView):
+class DownloadCSVView(PageMixin, CustomLoginRequiredMixin, TemplateView):
     """Class to download administrativelevels under excel file"""
 
     template_name = "components/download.html"
@@ -352,7 +352,7 @@ class DownloadCSVView(PageMixin, LoginRequiredMixin, TemplateView):
             )
 
 
-class AdministrativeLevelsListView(PageMixin, LoginRequiredMixin, ListView):
+class AdministrativeLevelsListView(PageMixin, CustomLoginRequiredMixin, ListView):
     """Display administrative level list"""
 
     model = AdministrativeLevel
@@ -397,7 +397,7 @@ class AdministrativeLevelsListView(PageMixin, LoginRequiredMixin, ListView):
 
 
 # Obstacles
-class ObstaclesListView(PageMixin, LoginRequiredMixin, TemplateView):
+class ObstaclesListView(PageMixin, CustomLoginRequiredMixin, TemplateView):
     model = VillageObstacle
     template_name = "priorities/obstacles.html"
     context_object_name = "obstacles"
@@ -499,7 +499,7 @@ def obstacle_delete(request, obstacle_id):
 
 
 # Goals
-class GoalsListView(PageMixin, LoginRequiredMixin, TemplateView):
+class GoalsListView(PageMixin, CustomLoginRequiredMixin, TemplateView):
     model = VillageGoal
     template_name = "priorities/goals.html"
     context_object_name = "goals"
@@ -595,7 +595,7 @@ def goal_delete(request, goal_id):
 
 
 # Priorities
-class PrioritiesListView(PageMixin, LoginRequiredMixin, TemplateView):
+class PrioritiesListView(PageMixin, CustomLoginRequiredMixin, TemplateView):
     model = VillagePriority
     template_name = "priorities/priorities.html"
     context_object_name = "priorities"
@@ -730,7 +730,7 @@ def priority_delete(request, priority_id):
 
 
 # ====================== Geographical unit=========================================
-class GeographicalUnitListView(PageMixin, LoginRequiredMixin, ListView):
+class GeographicalUnitListView(PageMixin, CustomLoginRequiredMixin, ListView):
     """Display geographical unit list"""
 
     model = GeographicalUnit
@@ -768,7 +768,7 @@ class GeographicalUnitListView(PageMixin, LoginRequiredMixin, ListView):
 
 
 class GeographicalUnitCreateView(
-    PageMixin, LoginRequiredMixin, AdminPermissionRequiredMixin, CreateView
+    PageMixin, CustomLoginRequiredMixin, AdminPermissionRequiredMixin, CreateView
 ):
     model = GeographicalUnit
     template_name = "geographical_unit_create.html"
@@ -811,7 +811,7 @@ class GeographicalUnitCreateView(
 
 
 class GeographicalUnitUpdateView(
-    PageMixin, LoginRequiredMixin, AdminPermissionRequiredMixin, UpdateView
+    PageMixin, CustomLoginRequiredMixin, AdminPermissionRequiredMixin, UpdateView
 ):
     model = GeographicalUnit
     template_name = "geographical_unit_create.html"
@@ -873,7 +873,7 @@ class GeographicalUnitUpdateView(
         return super(GeographicalUnitUpdateView, self).get(request, *args, **kwargs)
 
 
-class GeographicalUnitDetailView(PageMixin, LoginRequiredMixin, DetailView):
+class GeographicalUnitDetailView(PageMixin, CustomLoginRequiredMixin, DetailView):
     """Class to present the detail page of one geographical unit"""
 
     model = GeographicalUnit
@@ -893,7 +893,7 @@ class GeographicalUnitDetailView(PageMixin, LoginRequiredMixin, DetailView):
 # ======================================CVD==============================================
 
 
-class CVDListView(PageMixin, LoginRequiredMixin, ListView):
+class CVDListView(PageMixin, CustomLoginRequiredMixin, ListView):
     """Display geographical unit list"""
 
     model = CVD
@@ -929,7 +929,7 @@ class CVDListView(PageMixin, LoginRequiredMixin, ListView):
 
 
 class CVDCreateView(
-    PageMixin, LoginRequiredMixin, AdminPermissionRequiredMixin, CreateView
+    PageMixin, CustomLoginRequiredMixin, AdminPermissionRequiredMixin, CreateView
 ):
     model = CVD
     template_name = "cvd_create.html"
@@ -969,7 +969,7 @@ class CVDCreateView(
 
 
 class CVDUpdateView(
-    PageMixin, LoginRequiredMixin, AdminPermissionRequiredMixin, UpdateView
+    PageMixin, CustomLoginRequiredMixin, AdminPermissionRequiredMixin, UpdateView
 ):
     model = CVD
     template_name = "cvd_create.html"
@@ -1022,7 +1022,7 @@ class CVDUpdateView(
         return super(CVDUpdateView, self).get(request, *args, **kwargs)
 
 
-class CVDDetailView(PageMixin, LoginRequiredMixin, DetailView):
+class CVDDetailView(PageMixin, CustomLoginRequiredMixin, DetailView):
     """Class to present the detail page of one CVD"""
 
     model = CVD
@@ -1036,7 +1036,7 @@ class CVDDetailView(PageMixin, LoginRequiredMixin, DetailView):
     ]
 
 
-class DownloadCVDCSVView(PageMixin, LoginRequiredMixin, TemplateView):
+class DownloadCVDCSVView(PageMixin, CustomLoginRequiredMixin, TemplateView):
     """Class to download CVD under excel file"""
 
     template_name = "components/download.html"

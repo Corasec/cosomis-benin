@@ -57,33 +57,31 @@
                         <thead>
                         <tr>
                             <th>{% translate 'N°' %}</th>
-                            {% comment %} <th>{% translate 'Village' %}</th>
-                            <th>{% translate 'Canton' %}</th> {% endcomment %}
-                            <th>{% translate 'Sites' %}</th>
-                            <th>{% translate 'Region' %}</th>
-                            <th>{% translate 'Project Name' %}</th>
-                            <th>{% translate 'Type' %}</th>
+                            <th>{% translate 'Département' %}</th>
+                            <th>{% translate 'Commune' %}</th>
+                            <th>{% translate 'Arrondissement' %}</th>
+                            <th>{% translate 'Villages' %}</th>
+                            <th class="project-name-col">{% translate 'Project Name' %}</th>
+                            <th class="description-col">{% translate 'Description' %}</th>
                             <th>{% translate 'Status' %}</th>
+                            <th>{% translate 'Sector' %}</th>
+                            <th>{% translate 'Component' %}</th>
+                            <th>{% translate 'Type' %}</th>
                             <th>{% translate 'Allocation' %} CFA</th>
-                            <th width="12%">{% translate 'Action' %}</th>
+                            <th>{% translate 'Project management' %}</th>
+                            <th>{% translate 'Action' %}</th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for subproject in subprojects %}
                             <tr>
-                                <td>N{{ subproject.number }}.{{ subproject.joint_subproject_number }}</td>
-                                {% comment %} <td>{{ subproject.get_village.name }}</td>
-                                <td>{{ subproject.get_cantons_names }}</td> {% endcomment %}
-                                <td>
-                                    {% if '/' in subproject.get_cantons_names %}
-                                        {{ subproject.get_cantons_names }}
-                                    {% else %}
-                                        {{ subproject.get_village.name }}
-                                    {% endif %}
-                                </td>
-                                <td>{{ subproject.get_canton.parent.parent.parent.name }}</td>
-                                <td>{{ subproject.full_title_of_approved_subproject }}</td>
-                                <td>{{ subproject.type_of_subproject }}</td>
+                                <td>{{ subproject.number }}</td>
+                                <td>{{ subproject.location_subproject_realized.parent.parent }}</td>
+                                <td>{{ subproject.location_subproject_realized.parent }}</td>
+                                <td>{{ subproject.location_subproject_realized }}</td>
+                                <td>{{ subproject.get_beneficiary_villages }}</td>
+                                <td class="project-name-col">{{ subproject.full_title_of_approved_subproject }}</td>
+                                <td class="description-col">{{ subproject.comments }}</td>
                                 <td>
                                     {% if subproject.get_current_subproject_step_and_level %}
                                         {{ subproject.get_current_subproject_step_and_level }}
@@ -91,13 +89,17 @@
                                         {% translate 'No start' %}
                                     {% endif %}
                                 </td>
+                                <td>{{ subproject.subproject_sector }}</td>
+                                <td>{{ subproject.component }}</td>
+                                <td>{{ subproject.subproject_type_designation }}</td>
                                 <td>{{ subproject.get_estimated_cost_str }}</td>
+                                <td>{{ subproject.project_management }}</td>
                                 <td>
                                     <a href="{% url 'subprojects:detail' subproject.pk %}" style="font-size: 9px !important;"
                                        class="btn btn-primary btn-xs" title="{% translate 'View details' %}">
                                         <i class="fa fa-eye"></i>
                                     </a>
-                                    {% if user.is_superuser or user|has_group:"Admin" or user|has_group:"Evaluator" or user|has_group:"Infra" %}
+                                    {% if user.is_superuser or user|has_group:"Admin" or user|has_group:"Evaluator" or user|has_group:"Infra" or user|has_group:"technical_facilitator" %}
                                     <a href="{% url 'subprojects:update' subproject.pk %}" style="font-size: 9px !important;"
                                        class="btn btn-primary btn-xs" title="{% translate 'Edit' %}">
                                         <i class="fa fa-edit"></i>
@@ -161,6 +163,17 @@
             </div>
         </div>
     </div>
+<style>
+    .project-name-col {
+        min-width: 200px; 
+        max-width: 35%;
+    }
+    
+    .description-col {
+        min-width: 200px; 
+        max-width: 35%;
+    }
+</style>
 {% endblock %}
 
 {% block javascript %}

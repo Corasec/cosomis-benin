@@ -44,13 +44,14 @@
                             <div class="float-right">
                                 {% if user.is_superuser or user|has_group:"Admin" or user|has_group:"Evaluator" or user|has_group:"Infra" %}
                                     <a href="{% url 'subprojects:update' object.pk %}" class="float-right font-weight-bold">{% translate 'Update' %}</a>
-                                    {% if user.is_superuser or user|has_group:"Admin" or user|has_group:"Evaluator" %}
-                                    {% if not object.has_subprojects_linked and not object.link_to_subproject %}
-                                    <br />
-                                    <a href="{% url 'subprojects:create_infra_or_link_subproject' object.pk %}" class="font-weight-bold" style="font-size: 10px !important;">{% translate 'Add an infrastructure or a subproject linking to this sub-project' %}</a>
-                                    {% endif %}
-                                    {% endif %}
                                 {% endif %}
+                                    {% comment %} {% if user.is_superuser or user|has_group:"Admin" or user|has_group:"Evaluator" or user|has_group:"technical_facilitator" %}
+                                        {% if not object.has_subprojects_linked and not object.link_to_subproject %}
+                                            <br />
+                                            <a href="{% url 'subprojects:create_infra_or_link_subproject' object.pk %}" class="font-weight-bold" style="font-size: 10px !important;">{% translate 'Add an infrastructure or a subproject linking to this sub-project' %}</a>
+                                        {% endif %}
+                                    {% endif %} {% endcomment %}
+                                
                                 {% if object.link_to_subproject %}
                                 <br />
                                 <a href="{% url 'subprojects:detail' object.link_to_subproject.pk %}" class="float-right font-weight-bold">{% translate 'View subproject details' %}</a>
@@ -135,7 +136,7 @@
                     <div class="card-body">
 
                         <div class="clearfix">
-                                {% if user.is_superuser or user|has_group:"Admin" or user|has_group:"Evaluator" %}
+                                {% if user.is_superuser or user|has_group:"Admin" or user|has_group:"Evaluator" or user|has_group:"technical_facilitator" %}
                                 <a href="{% url 'subprojects:create_infra_or_link_subproject' object.pk %}" class="font-weight-bold" style="font-size: 10px !important;">{% translate 'Add an infrastructure or a subproject linking to this sub-project' %}</a>
                                 <br /><br />
                                 {% endif %}
@@ -151,7 +152,7 @@
                                         {% for sub_sub in object.get_infrastructures_linked %}
                                             <a href="{% url 'subprojects:update' sub_sub.pk %}" class="font-weight-bold" style="font-size: 9px !important;">{{ forloop.counter }}-/ N{{ sub_sub.number }}.{{ sub_sub.joint_subproject_number }} {{ sub_sub.type_of_subproject }}</a>
                                               &nbsp; 
-                                            {% if user.is_superuser or user|has_group:"Admin" or user|has_group:"Evaluator" or user|has_group:"Infra" %}
+                                            {% if user.is_superuser or user|has_group:"Admin" or user|has_group:"Evaluator" or user|has_group:"Infra" or user|has_group:"technical_facilitator" %}
                                             <a href="{% url 'subprojects:update' sub_sub.pk %}" style="font-size: 9px !important;"
                                                  title="{% translate 'Edit' %}">
                                                 <i class="fa fa-edit"></i>
@@ -174,7 +175,7 @@
                                         {% for sub_sub in object.get_subprojects_linked %}
                                             <a href="{% url 'subprojects:update' sub_sub.pk %}" class="font-weight-bold" style="font-size: 9px !important;">{{ forloop.counter }}-/ N{{ sub_sub.number }}.{{ sub_sub.joint_subproject_number }} {{ sub_sub.type_of_subproject }}</a>
                                              &nbsp; 
-                                            {% if user.is_superuser or user|has_group:"Admin" or user|has_group:"Evaluator" or user|has_group:"Infra" %}
+                                            {% if user.is_superuser or user|has_group:"Admin" or user|has_group:"Evaluator" or user|has_group:"Infra" or user|has_group:"technical_facilitator" %}
                                             <a href="{% url 'subprojects:update' sub_sub.pk %}" style="font-size: 9px !important;"
                                                  title="{% translate 'Edit' %}">
                                                 <i class="fa fa-edit"></i>

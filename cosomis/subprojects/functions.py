@@ -6,6 +6,7 @@ import copy
 import re as re_module
 import sys, os
 from sys import platform
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 from administrativelevels.libraries import functions as libraries_functions
 from administrativelevels.models import AdministrativeLevel, CVD
@@ -1566,16 +1567,16 @@ def load_subprojects_from_excel(file_path):
     for index, row in df.iterrows():
         try:
             location_subproject_realized_qs = AdministrativeLevel.objects.filter(
-                name=row["Village"].upper(), type="village"
+                name=row["Arrondissement"].upper(), type="arrondissement"
             )
             if location_subproject_realized_qs.count() != 1:
                 raise ValueError(
-                    f"Expected exactly one AdministrativeLevel for '{row['Village']}' at line {index + 2}, found {location_subproject_realized_qs.count()}"
+                    f"Expected exactly one AdministrativeLevel for '{row['Arrondissement']}' at line {index + 2}, found {location_subproject_realized_qs.count()}"
                 )
             location_subproject_realized = location_subproject_realized_qs.first()
         except AdministrativeLevel.DoesNotExist:
             raise ValueError(
-                f"AdministrativeLevel not found for '{row['Village']}' at line {index + 2}"
+                f"AdministrativeLevel (arr) not found for '{row['Arrondissement']}' at line {index + 2}"
             )
 
         try:
@@ -1599,18 +1600,42 @@ def load_subprojects_from_excel(file_path):
         # count+=1
         # print (f" Data{count} : {data}")
         if not Subproject.objects.filter(
+            number=row["N*"],
             location_subproject_realized=location_subproject_realized,
             full_title_of_approved_subproject=row["Intitulé du sous projet"],
         ).exists():
-            Subproject.objects.create(
+            subproject, created = Subproject.objects.get_or_create(
+                number=row["N*"],
                 location_subproject_realized=location_subproject_realized,
                 full_title_of_approved_subproject=row["Intitulé du sous projet"],
-                comments=row["Description du projet"],
-                subproject_sector=row["Sous-secteur d'activité"],
-                component=component,
-                subproject_type_designation=row["Type de sous-projet"],
-                estimated_cost=row["Coût prévisionnel"],
-                project_management=row["Maîtrise d'ouvrage"],
+                defaults={
+                    "comments": row["Description du projet"],
+                    "subproject_sector": row["Sous-secteur d'activité"],
+                    "component": component,
+                    "subproject_type_designation": row["Type de sous-projet"],
+                    "estimated_cost": row["Coût prévisionnel"],
+                    "project_management": row["Maîtrise d'ouvrage"],
+                },
             )
+            # Split the 'Village' column to get the list of villages
+            villages = [v.strip() for v in row["Village"].split(",")]
+            for village_name in villages:
+                try:
+                    village = AdministrativeLevel.objects.get(
+                        name=village_name.upper(), type="village"
+                    )
+                    subproject.list_of_beneficiary_villages.add(village)
+
+                except ObjectDoesNotExist:
+                    print(
+                        f"Village '{village_name}' not found for subproject '{subproject.pk}' : '{subproject.full_title_of_approved_subproject}' at row {index + 1}."
+                    )
+
+                except MultipleObjectsReturned:
+                    print(
+                        f"Multiple villages found for '{village_name}' at row {index + 1}."
+                    )
+
+            subproject.save()
             count += 1
     print(f"{count} datas loaded successfully")

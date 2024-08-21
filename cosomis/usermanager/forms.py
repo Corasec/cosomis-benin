@@ -1,20 +1,20 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import gettext as _
-
+from django.db.models import Q
 from django.contrib.auth.models import User
 
 
 class EmailAuthenticationForm(AuthenticationForm):
     def __init__(self, request=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["username"].label = _("Email")
+        self.fields["username"].label = _("Email or Username")
 
     def clean(self):
         email = self.cleaned_data.get("username")
         password = self.cleaned_data.get("password")
 
-        user = User.objects.filter(email__iexact=email).first()
+        user = User.objects.filter(Q(email=email) | Q(username=email)).first()
 
         if not user:
             raise self.get_invalid_login_error()

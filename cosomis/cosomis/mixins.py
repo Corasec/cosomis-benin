@@ -3,27 +3,34 @@ from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 
 from administrativelevels.models import AssignedTo
 
+
 class CustomLoginRequiredMixin(LoginRequiredMixin):
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return self.handle_no_permission()
 
-        # If user is technical_facilitator & requested resource is 
+        # If user is technical_facilitator & requested resource is
         # not a technical_facilitator enabled resource, then deny access
-        if not hasattr(self, 'is_technical_facilitator_resource') and self.request.user.groups.filter(name='technical_facilitator').exists():
+        if (
+            not hasattr(self, "is_technical_facilitator_resource")
+            and self.request.user.groups.filter(name="technical_facilitator").exists()
+        ):
             return self.handle_no_permission()
-        
+
         return super().dispatch(request, *args, **kwargs)
+
 
 class TechnicalFacilitatorAccessMixin(UserPassesTestMixin):
     is_technical_facilitator_resource = True
 
     def test_func(self):
-        admin_level_id = self.request.resolver_match.kwargs.get('pk', None)
+        admin_level_id = self.request.resolver_match.kwargs.get("pk", None)
         if admin_level_id is None:
             return False
- 
-        return AssignedTo.objects.filter(user=self.request.user, administrative_level_id=int(admin_level_id)).exists()
+
+        return AssignedTo.objects.filter(
+            user=self.request.user, administrative_level_id=int(admin_level_id)
+        ).exists()
 
 
 class PageMixin(object):
@@ -100,4 +107,3 @@ class JSONResponseMixin:
 
     def get_data(self, context):
         return context
-
